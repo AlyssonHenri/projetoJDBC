@@ -1,0 +1,64 @@
+drop database projetoJDBC;
+
+create database projetoJDBC;
+
+use projetoJDBC;
+
+create table conta (
+	ID int primary key auto_increment,
+    nome varchar(200) not null,
+    telefone varchar(200) not null,
+    cpf varchar(20) unique not null,
+    endereco varchar(200),
+    cargo int,
+    salario float,
+    data_contrato date,
+    inicio_expediente time,
+    fim_expediente time,
+    mensalidade float,
+    conta_TIPO int not null
+);
+
+create table equipamento (
+	ID int primary key auto_increment,
+    nome varchar(200) not null,
+    tipo varchar(100) not null,
+    status_equipamento boolean not null,
+    conta_criador int,
+    data_registro date,
+    foreign key (conta_criador) references conta(ID)
+);
+
+create table modificacoes (
+	data_modificacao date not null,
+    campo_modificado varchar(200) not null,
+    conta_modificador int,
+    equipamento_modificado int,
+    foreign key (conta_modificador) references conta(ID),
+    foreign key (equipamento_modificado) references equipamento(ID)
+);
+
+create table treino (
+	ID int primary key auto_increment,
+    nome varchar(200) not null,
+    duracao time not null,
+    conta_cliente int,
+    foreign key (conta_cliente) references conta(ID)
+);
+
+create table reservas (
+	data_reserva date not null,
+    tempo_de_uso time not null,
+    conta_cliente int,
+    equipamento int,
+    foreign key (conta_cliente) references conta(ID),
+    foreign key (equipamento) references equipamento(ID)
+);
+
+create table uso_de_equipamento (
+	tempo_de_uso time not null,
+    treino int,
+    equipamento int,
+    foreign key (treino) references treino(ID),
+    foreign key (equipamento) references equipamento(ID)
+);
