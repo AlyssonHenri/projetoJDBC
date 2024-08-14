@@ -4,6 +4,7 @@ import db.entities.equipamento;
 
 import java.sql.Date;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Scanner;
 
 public class Main {
@@ -42,11 +43,13 @@ public class Main {
         if (usuarioLogado.getTipo_conta().equals("cliente")) {
             System.out.println("1. Ver meus dados");
             System.out.println("0. Sair");
-        } else if (usuarioLogado.getTipo_conta().equals("funcionario")) {
+        } else if (usuarioLogado.getTipo_conta().equals("funcionario") || usuarioLogado.getTipo_conta().equals("admin")) {
             System.out.println("1. Criar nova conta");
             System.out.println("2. Criar novo equipamento");
             System.out.println("3. Exibir dados de uma conta");
-            System.out.println("4. Deletar uma conta");
+            System.out.println("4. Listar todas as contas");
+            System.out.println("5. Deletar uma conta");
+            System.out.println("6. Atualizar dados de uma conta");
             System.out.println("0. Sair");
         }
 
@@ -54,20 +57,35 @@ public class Main {
 
         switch (escolha) {
             case 1:
-                if (usuarioLogado.getTipo_conta().equals("funcionario")) {
+                if (usuarioLogado.getTipo_conta().equals("funcionario") || usuarioLogado.getTipo_conta().equals("admin")) {
                     criarNovaConta();
                 } else if (usuarioLogado.getTipo_conta().equals("cliente")) {
                     verMeusDados();
                 }
                 break;
             case 2:
-                if (usuarioLogado.getTipo_conta().equals("funcionario")) {
+                if (usuarioLogado.getTipo_conta().equals("funcionario") || usuarioLogado.getTipo_conta().equals("admin")) {
                     criarNovoEquipamento();
                 }
                 break;
             case 3:
-                if (usuarioLogado.getTipo_conta().equals("funcionario")) {
+                if (usuarioLogado.getTipo_conta().equals("funcionario") || usuarioLogado.getTipo_conta().equals("admin")) {
                     listarDadosConta();
+                }
+                break;
+            case 4:
+                if (usuarioLogado.getTipo_conta().equals("funcionario") || usuarioLogado.getTipo_conta().equals("admin")) {
+                    listarTodasAsContas();
+                }
+                break;
+            case 5:
+                if (usuarioLogado.getTipo_conta().equals("funcionario") || usuarioLogado.getTipo_conta().equals("admin")) {
+                    deletarConta();
+                }
+                break;
+            case 6:
+                if (usuarioLogado.getTipo_conta().equals("funcionario") || usuarioLogado.getTipo_conta().equals("admin")) {
+                    atualizarConta();
                 }
                 break;
             case 0:
@@ -132,6 +150,42 @@ public class Main {
         System.out.println("Nova conta criada com sucesso!");
     }
 
+    public static void atualizarConta() {
+        try {
+            System.out.print("ID da conta: ");
+            int id = scanner.nextInt();
+
+            conta contaAlvo = daoFactory.createContaDao().procurarPorId(id);
+
+            if (contaAlvo.getTipo_conta().equals("cliente")){
+                System.out.println("=== Selecione os dados para modificar.");
+                System.out.println("1. Nome");
+                System.out.println("2. Telefone");
+                System.out.println("3. E-mail");
+                System.out.println("4. Endereço");
+                System.out.println("5. Mensalidade");
+
+                int val = scanner.nextInt();
+            } else {
+                System.out.println("=== Selecione os dados para modificar.");
+                System.out.println("1. Nome");
+                System.out.println("2. Telefone");
+                System.out.println("3. E-mail");
+                System.out.println("4. Endereço");
+                System.out.println("5. Salário");
+                System.out.println("6. Inicio expediente");
+                System.out.println("7. Fim expediente");
+
+                int val = scanner.nextInt();
+            }
+
+
+
+        } catch (Exception e){
+            System.out.println("Conta não encontrada no banco de dados.");
+        }
+    }
+
     public static void criarNovoEquipamento() {
         equipamento novoEquipamento = new equipamento();
 
@@ -149,12 +203,9 @@ public class Main {
     public static void listarDadosConta() {
         try {
             System.out.print("ID da conta: ");
-            int id = Integer.parseInt(scanner.nextLine());
-            System.out.println(id);
+            int id = scanner.nextInt();
 
             conta contaEncontrada = daoFactory.createContaDao().procurarPorId(id);
-
-            System.out.println(contaEncontrada.getTipo_conta());
 
             if (contaEncontrada.getTipo_conta().equals("cliente")){
                 System.out.println("=== Dados ===");
@@ -178,6 +229,53 @@ public class Main {
                 System.out.println("Fim expediente: " + contaEncontrada.getFim_expediente_funcionario());
             }
         } catch (Exception e) {
+            System.out.println("Conta não encontrada no banco de dados.");
+        }
+    }
+
+    public static void listarTodasAsContas() {
+        List<conta> lista = daoFactory.createContaDao().procurarTodos();
+
+        for (int i = 0; i < lista.size(); i++){
+            conta contaLoop = daoFactory.createContaDao().procurarPorId(lista.get(i).getId());
+
+            System.out.println("=== ==Conta "+ i +"== ===");
+            if (contaLoop.getTipo_conta().equals("cliente")){
+                System.out.println("Nome: " + contaLoop.getNome());
+                System.out.println("Telefone: " + contaLoop.getTelefone());
+                System.out.println("E-mail: " + contaLoop.getE_mail());
+                System.out.println("CPF: " + contaLoop.getCpf());
+                System.out.println("Endereço: " + contaLoop.getEndereco());
+                System.out.println("Data de Registro: " + contaLoop.getData_registro());
+                System.out.println("Mensalidade: " + contaLoop.getMensalidade_cliente());
+            } else {
+                System.out.println("Nome: " + contaLoop.getNome());
+                System.out.println("Telefone: " + contaLoop.getTelefone());
+                System.out.println("E-mail: " + contaLoop.getE_mail());
+                System.out.println("CPF: " + contaLoop.getCpf());
+                System.out.println("Endereço: " + contaLoop.getEndereco());
+                System.out.println("Data de Registro: " + contaLoop.getData_registro());
+                System.out.println("Salário: " + contaLoop.getSalario_funcionario());
+                System.out.println("Inicio expediente: " + contaLoop.getInicio_expediente_funcionario());
+                System.out.println("Fim expediente: " + contaLoop.getFim_expediente_funcionario());
+            }
+        }
+    }
+
+    public static void deletarConta() {
+        try {
+            System.out.print("ID da conta: ");
+            int id = Integer.parseInt(scanner.nextLine());
+
+            conta contaEncontrada = daoFactory.createContaDao().procurarPorId(id);
+
+            if (usuarioLogado.getTipo_conta().equals("admin") && contaEncontrada.getTipo_conta().equals("admin")){
+                daoFactory.createContaDao().deletarPorId(contaEncontrada);
+            } else {
+                System.out.println("Operação negada.");
+            }
+
+        } catch (Exception e){
             System.out.println("Conta não encontrada no banco de dados.");
         }
     }

@@ -7,7 +7,7 @@ public class equipamento {
     private int id;
     private String nome;
     private String tipo;
-    private int status_equipamento; // Changed to int
+    private int status_equipamento;
     private Date data_registro;
 
     public int getId() {

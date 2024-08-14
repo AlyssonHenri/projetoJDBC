@@ -8,15 +8,17 @@ create table conta (
 	ID int primary key auto_increment,
     nome varchar(200) not null,
     telefone varchar(200) not null,
+    e_mail varchar(200) not null,
     cpf varchar(20) unique not null,
     endereco varchar(200),
-    cargo int,
-    salario float,
-    data_contrato date,
-    inicio_expediente time,
-    fim_expediente time,
-    mensalidade float,
-    conta_TIPO int not null
+    login varchar(200),
+    senha varchar(200),
+    tipo_conta varchar(200),
+    data_registro date,
+    salario_funcionario float,
+    inicio_expediente_funcionario time,
+    fim_expediente_funcionario time,
+    mensalidade_cliente float
 );
 
 create table equipamento (
