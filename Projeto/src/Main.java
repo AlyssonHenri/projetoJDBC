@@ -153,36 +153,93 @@ public class Main {
     public static void atualizarConta() {
         try {
             System.out.print("ID da conta: ");
-            int id = scanner.nextInt();
+            int id = Integer.parseInt(scanner.nextLine());
 
             conta contaAlvo = daoFactory.createContaDao().procurarPorId(id);
 
-            if (contaAlvo.getTipo_conta().equals("cliente")){
-                System.out.println("=== Selecione os dados para modificar.");
+            if (contaAlvo == null) {
+                System.out.println("Conta não encontrada no banco de dados.");
+                return;
+            }
+
+            System.out.println("=== Selecione os dados para modificar.");
+            if (contaAlvo.getTipo_conta().equals("cliente")) {
                 System.out.println("1. Nome");
                 System.out.println("2. Telefone");
                 System.out.println("3. E-mail");
                 System.out.println("4. Endereço");
                 System.out.println("5. Mensalidade");
-
-                int val = scanner.nextInt();
-            } else {
-                System.out.println("=== Selecione os dados para modificar.");
+                System.out.println("6. Login");
+                System.out.println("7. Senha");
+            } else if (contaAlvo.getTipo_conta().equals("funcionario") || contaAlvo.getTipo_conta().equals("admin")) {
                 System.out.println("1. Nome");
                 System.out.println("2. Telefone");
                 System.out.println("3. E-mail");
                 System.out.println("4. Endereço");
                 System.out.println("5. Salário");
-                System.out.println("6. Inicio expediente");
-                System.out.println("7. Fim expediente");
+                System.out.println("6. Login");
+                System.out.println("7. Senha");
+                System.out.println("8. Início expediente");
+                System.out.println("9. Fim expediente");
+            }
+            System.out.print("Escolha a opção (número): ");
+            int opcao = Integer.parseInt(scanner.nextLine());
 
-                int val = scanner.nextInt();
+            switch (opcao) {
+                case 1:
+                    System.out.print("Novo Nome: ");
+                    contaAlvo.setNome(scanner.nextLine());
+                    break;
+                case 2:
+                    System.out.print("Novo Telefone: ");
+                    contaAlvo.setTelefone(scanner.nextLine());
+                    break;
+                case 3:
+                    System.out.print("Novo E-mail: ");
+                    contaAlvo.setE_mail(scanner.nextLine());
+                    break;
+                case 4:
+                    System.out.print("Novo Endereço: ");
+                    contaAlvo.setEndereco(scanner.nextLine());
+                    break;
+                case 5:
+                    if (contaAlvo.getTipo_conta().equals("cliente")) {
+                        System.out.print("Nova Mensalidade: ");
+                        contaAlvo.setMensalidade_cliente(Float.parseFloat(scanner.nextLine()));
+                    } else {
+                        System.out.print("Novo Salário: ");
+                        contaAlvo.setSalario_funcionario(Float.parseFloat(scanner.nextLine()));
+                    }
+                    break;
+                case 6:
+                    System.out.print("Novo Login: ");
+                    contaAlvo.setEndereco(scanner.nextLine());
+                    break;
+                case 7:
+                    System.out.print("Nova Senha: ");
+                    contaAlvo.setEndereco(scanner.nextLine());
+                    break;
+                case 8:
+                    if (contaAlvo.getTipo_conta().equals("funcionario") || contaAlvo.getTipo_conta().equals("admin")) {
+                        System.out.print("Novo Início do Expediente (HH:MM:SS): ");
+                        contaAlvo.setInicio_expediente_funcionario(scanner.nextLine());
+                    }
+                    break;
+                case 9:
+                    if (contaAlvo.getTipo_conta().equals("funcionario") || contaAlvo.getTipo_conta().equals("admin")) {
+                        System.out.print("Novo Fim do Expediente (HH:MM:SS): ");
+                        contaAlvo.setFim_expediente_funcionario(scanner.nextLine());
+                    }
+                    break;
+                default:
+                    System.out.println("Opção inválida.");
+                    return;
             }
 
-
-
-        } catch (Exception e){
-            System.out.println("Conta não encontrada no banco de dados.");
+            daoFactory.createContaDao().atualizar(contaAlvo);
+            System.out.println("Conta atualizada com sucesso!");
+        } catch (Exception e) {
+            System.out.println("Erro ao atualizar a conta: " + e.getMessage());
         }
     }
 
