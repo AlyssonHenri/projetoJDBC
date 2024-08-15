@@ -44,13 +44,16 @@ create table treino (
 	ID int primary key auto_increment,
     nome varchar(200) not null,
     duracao time not null,
+    descricao varchar(200),     
     conta_cliente int,
     foreign key (conta_cliente) references conta(ID)
 );
 
 create table reservas (
+    id int primary key auto_increment
 	data_reserva date not null,
     tempo_de_uso time not null,
+    status int,
     conta_cliente int,
     equipamento int,
     foreign key (conta_cliente) references conta(ID),
