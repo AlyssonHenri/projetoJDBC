@@ -2,10 +2,7 @@ package db.entities.dao;
 
 
 import db.DB;
-import db.entities.dao.impl.contaDaoJDBC;
-import db.entities.dao.impl.equipamentoDaoJDBC;
-import db.entities.dao.impl.reservaDaoJDBC;
-import db.entities.dao.impl.treinoDaoJDBC;
+import db.entities.dao.impl.*;
 
 public class daoFactory {
     public static contaDao createContaDao(){
@@ -22,5 +19,9 @@ public class daoFactory {
 
     public static reservaDao createReservaDao() {
         return new reservaDaoJDBC(DB.getConnection());
+    }
+
+    public static uso_de_equipamentoDao createUsoDeEquipamentoDao() {
+        return new uso_de_equipamentoDaoJDBC(DB.getConnection());
     }
 }

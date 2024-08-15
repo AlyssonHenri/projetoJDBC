@@ -22,8 +22,8 @@ public class reservaDaoJDBC implements reservaDao {
         PreparedStatement st = null;
         ResultSet rs = null;
         try {
-            // Verifica se já existe uma reserva no mesmo dia e com sobreposição de horário
-            st = conn.prepareStatement("select id from reservas where data_reserva = ? and equipamento = ? and " + "((hora_inicio < ? and hora_fim > ?) or (hora_inicio < ? and hora_fim > ?))" );
+            // Verifica se já existe uma reserva ativa (status = 1) no mesmo dia e com sobreposição de horário
+            st = conn.prepareStatement("select id from reservas where data_reserva = ? and equipamento = ? and status = 1 and " + "((hora_inicio < ? and hora_fim > ?) or (hora_inicio < ? and hora_fim > ?))" );
             java.sql.Date dataAtual = new java.sql.Date(System.currentTimeMillis());
             st.setDate(1, dataAtual);
             st.setInt(2, e.getId());
@@ -34,18 +34,17 @@ public class reservaDaoJDBC implements reservaDao {
             rs = st.executeQuery();
 
             if (rs.next()) {
-                throw new RuntimeException("Já existe uma reserva para o mesmo dia e com sobreposição de horário.");
+                throw new RuntimeException("Já existe uma reserva ativa para esse horário.");
             }
 
-            // Se não existe, insere a nova reserva
-            st = conn.prepareStatement(
-                    "insert into reservas(data_reserva, hora_inicio, hora_fim, conta_cliente, equipamento) values(?, ?, ?, ?, ?)"
-            );
+            // Se não existe uma reserva ativa, insere a nova reserva
+            st = conn.prepareStatement("insert into reservas(data_reserva, hora_inicio, hora_fim, status, conta_cliente, equipamento) values(?, ?, ?, ?, ?, ?)" );
             st.setDate(1, dataAtual);
             st.setTime(2, Time.valueOf(v.getHora_inicio()));
             st.setTime(3, Time.valueOf(v.getHora_fim()));
-            st.setInt(4, c.getId());
-            st.setInt(5, e.getId());
+            st.setInt(4, 1); // Status = 1 (ativo)
+            st.setInt(5, c.getId());
+            st.setInt(6, e.getId());
             st.executeUpdate();
         } catch (SQLException err) {
             throw new RuntimeException(err);
@@ -55,10 +54,11 @@ public class reservaDaoJDBC implements reservaDao {
         }
     }
 
+
     @Override
     public void editarReserva(reserva v) {
         PreparedStatement st = null;
-        StringBuilder sql = new StringBuilder("update reservas set ");
+        StringBuilder sql = new StringBuilder("UPDATE reservas SET ");
         boolean primeiroCampo = true;
 
         try {
@@ -72,9 +72,13 @@ public class reservaDaoJDBC implements reservaDao {
             }
             if (v.getHora_fim() != null) {
                 sql.append(primeiroCampo ? "" : ", ").append("hora_fim = ?");
+                primeiroCampo = false;
             }
 
-            sql.append(" where id = ?");
+            sql.append(primeiroCampo ? "" : ", ").append("status = ?");
+
+
+            sql.append(" WHERE id = ?");
 
             st = conn.prepareStatement(sql.toString());
             int index = 1;
@@ -89,6 +93,7 @@ public class reservaDaoJDBC implements reservaDao {
                 st.setTime(index++, Time.valueOf(v.getHora_fim()));
             }
 
+            st.setInt(index++, v.getStatus());
             st.setInt(index, v.getId());
             st.executeUpdate();
         } catch (SQLException ex) {
@@ -97,6 +102,7 @@ public class reservaDaoJDBC implements reservaDao {
             DB.closeStatment(st);
         }
     }
+
 
     @Override
     public reserva procurarPorId(int id) {

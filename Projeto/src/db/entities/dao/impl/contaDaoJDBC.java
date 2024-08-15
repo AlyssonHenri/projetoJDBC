@@ -77,113 +77,84 @@ public class contaDaoJDBC implements contaDao {
     public void atualizar(conta c) {
         PreparedStatement st = null;
         StringBuilder sql = new StringBuilder("UPDATE conta SET ");
-        boolean primeiroCampo = true;
+        List<Object> parametros = new ArrayList<>(); // Para armazenar os parâmetros a serem definidos
 
         try {
-            if (c.getNome() != null) {
-                sql.append(primeiroCampo ? "" : ", ").append("nome = ?");
-                primeiroCampo = false;
+            // Construção da query
+            if (c.getNome() != null && !c.getNome().isEmpty()) {
+                sql.append("nome = ?, ");
+                parametros.add(c.getNome());
             }
-            if (c.getTelefone() != null) {
-                sql.append(primeiroCampo ? "" : ", ").append("telefone = ?");
-                primeiroCampo = false;
+            if (c.getTelefone() != null && !c.getTelefone().isEmpty()) {
+                sql.append("telefone = ?, ");
+                parametros.add(c.getTelefone());
             }
-            if (c.getE_mail() != null) {
-                sql.append(primeiroCampo ? "" : ", ").append("e_mail = ?");
-                primeiroCampo = false;
+            if (c.getE_mail() != null && !c.getE_mail().isEmpty()) {
+                sql.append("e_mail = ?, ");
+                parametros.add(c.getE_mail());
             }
-            if (c.getCpf() != null) {
-                sql.append(primeiroCampo ? "" : ", ").append("cpf = ?");
-                primeiroCampo = false;
+            if (c.getCpf() != null && !c.getCpf().isEmpty()) {
+                sql.append("cpf = ?, ");
+                parametros.add(c.getCpf());
             }
-            if (c.getEndereco() != null) {
-                sql.append(primeiroCampo ? "" : ", ").append("endereco = ?");
-                primeiroCampo = false;
+            if (c.getEndereco() != null && !c.getEndereco().isEmpty()) {
+                sql.append("endereco = ?, ");
+                parametros.add(c.getEndereco());
             }
-            if (c.getLogin() != null) {
-                sql.append(primeiroCampo ? "" : ", ").append("login = ?");
-                primeiroCampo = false;
+            if (c.getLogin() != null && !c.getLogin().isEmpty()) {
+                sql.append("login = ?, ");
+                parametros.add(c.getLogin());
             }
-            if (c.getSenha() != null) {
-                sql.append(primeiroCampo ? "" : ", ").append("senha = ?");
-                primeiroCampo = false;
+            if (c.getSenha() != null && !c.getSenha().isEmpty()) {
+                sql.append("senha = ?, ");
+                parametros.add(c.getSenha());
             }
-            if (c.getTipo_conta() != null) {
-                sql.append(primeiroCampo ? "" : ", ").append("tipo_conta = ?");
-                primeiroCampo = false;
+            if (c.getTipo_conta() != null && !c.getTipo_conta().isEmpty()) {
+                sql.append("tipo_conta = ?, ");
+                parametros.add(c.getTipo_conta());
             }
             if (c.getData_registro() != null) {
-                sql.append(primeiroCampo ? "" : ", ").append("data_registro = ?");
-                primeiroCampo = false;
+                sql.append("data_registro = ?, ");
+                parametros.add(new java.sql.Date(c.getData_registro().getTime()));
             }
             if (c.getSalario_funcionario() != 0.0) {
-                sql.append(primeiroCampo ? "" : ", ").append("salario_funcionario = ?");
-                primeiroCampo = false;
+                sql.append("salario_funcionario = ?, ");
+                parametros.add(c.getSalario_funcionario());
             }
-            if (c.getInicio_expediente_funcionario() != null) {
-                sql.append(primeiroCampo ? "" : ", ").append("inicio_expediente_funcionario = ?");
-                primeiroCampo = false;
+            if (c.getInicio_expediente_funcionario() != null && !c.getInicio_expediente_funcionario().isEmpty() && c.getTipo_conta().equals("funcionario")) {
+                sql.append("inicio_expediente_funcionario = ?, ");
+                parametros.add(Time.valueOf(c.getInicio_expediente_funcionario()));
             }
-            if (c.getFim_expediente_funcionario() != null) {
-                sql.append(primeiroCampo ? "" : ", ").append("fim_expediente_funcionario = ?");
-                primeiroCampo = false;
+            if (c.getFim_expediente_funcionario() != null && !c.getFim_expediente_funcionario().isEmpty() && c.getTipo_conta().equals("funcionario")) {
+                sql.append("fim_expediente_funcionario = ?, ");
+                parametros.add(Time.valueOf(c.getFim_expediente_funcionario()));
             }
             if (c.getMensalidade_cliente() != 0.0) {
-                sql.append(primeiroCampo ? "" : ", ").append("mensalidade_cliente = ?");
-                primeiroCampo = false;
+                sql.append("mensalidade_cliente = ?, ");
+                parametros.add(c.getMensalidade_cliente());
+            }
+
+            // Remove a vírgula e o espaço extra no final da string
+            if (sql.length() > 0) {
+                sql.setLength(sql.length() - 2); // Remove ", " no final
+            } else {
+                System.out.println("Nenhuma alteração foi feita.");
+                return;
             }
 
             sql.append(" WHERE id = ?");
+            parametros.add(c.getId());
 
             st = conn.prepareStatement(sql.toString());
 
-            int index = 1;
-
-            if (c.getNome() != null) {
-                st.setString(index++, c.getNome());
+            // Define os parâmetros
+            for (int i = 0; i < parametros.size(); i++) {
+                st.setObject(i + 1, parametros.get(i));
             }
-            if (c.getTelefone() != null) {
-                st.setString(index++, c.getTelefone());
-            }
-            if (c.getE_mail() != null) {
-                st.setString(index++, c.getE_mail());
-            }
-            if (c.getCpf() != null) {
-                st.setString(index++, c.getCpf());
-            }
-            if (c.getEndereco() != null) {
-                st.setString(index++, c.getEndereco());
-            }
-            if (c.getLogin() != null) {
-                st.setString(index++, c.getLogin());
-            }
-            if (c.getSenha() != null) {
-                st.setString(index++, c.getSenha());
-            }
-            if (c.getTipo_conta() != null) {
-                st.setString(index++, c.getTipo_conta());
-            }
-            if (c.getData_registro() != null) {
-                st.setDate(index++, new java.sql.Date(c.getData_registro().getTime()));
-            }
-            if (c.getSalario_funcionario() != 0.0) {
-                st.setFloat(index++, c.getSalario_funcionario());
-            }
-            if (c.getInicio_expediente_funcionario() != null) {
-                st.setTime(index++, Time.valueOf(c.getInicio_expediente_funcionario()));
-            }
-            if (c.getFim_expediente_funcionario() != null) {
-                st.setTime(index++, Time.valueOf(c.getFim_expediente_funcionario()));
-            }
-            if (c.getMensalidade_cliente() != 0.0) {
-                st.setFloat(index++, c.getMensalidade_cliente());
-            }
-
-            st.setInt(index, c.getId());
 
             st.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Erro ao atualizar a conta: " + e.getMessage(), e);
         } finally {
             DB.closeStatment(st);
         }

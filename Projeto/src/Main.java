@@ -1,12 +1,11 @@
-import db.entities.conta;
+import db.entities.*;
 import db.entities.dao.daoFactory;
-import db.entities.equipamento;
-import db.entities.reserva;
-import db.entities.treino;
 
 import java.sql.Date;
 import java.util.List;
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Main {
     private static conta usuarioLogado = null;
@@ -49,6 +48,10 @@ public class Main {
             System.out.println("5. Editar um treino");
             System.out.println("6. Deletar um treino");
             System.out.println("7. Listar equipamentos");
+            System.out.println("8. Adicionar equipamento a um treino");
+            System.out.println("9. Remover equipamento de um treino");
+            System.out.println("10. Listar equipamentos de um treino");
+            System.out.println("11. Atualizar tempo de uso de um equipamento");
             System.out.println("0. Sair");
         } else if (usuarioLogado.getTipo_conta().equals("funcionario") || usuarioLogado.getTipo_conta().equals("admin")) {
             System.out.println("1. Criar nova conta");
@@ -61,6 +64,8 @@ public class Main {
             System.out.println("8. Deletar um equipamento");
             System.out.println("9. Listar dados de um equipamento");
             System.out.println("10. Listar equipamentos");
+            System.out.println("11. Listar todas as reservas");
+            System.out.println("12. Editar reservas");
             System.out.println("0. Sair");
         }
 
@@ -117,22 +122,30 @@ public class Main {
                 }
                 break;
             case 8:
-                if (usuarioLogado.getTipo_conta().equals("funcionario") || usuarioLogado.getTipo_conta().equals("admin")) {
+                if (usuarioLogado.getTipo_conta().equals("cliente")) {
+                    adicionarEquipamentoAoTreino();
+                } else if (usuarioLogado.getTipo_conta().equals("funcionario") || usuarioLogado.getTipo_conta().equals("admin")) {
                     deletarEquipamento();
                 }
                 break;
             case 9:
-                if (usuarioLogado.getTipo_conta().equals("funcionario") || usuarioLogado.getTipo_conta().equals("admin")) {
+                if (usuarioLogado.getTipo_conta().equals("cliente")) {
+                    removerEquipamentoDoTreino();
+                } else if (usuarioLogado.getTipo_conta().equals("funcionario") || usuarioLogado.getTipo_conta().equals("admin")) {
                     listarDadosEquipamento();
                 }
                 break;
             case 10:
-                if (usuarioLogado.getTipo_conta().equals("funcionario") || usuarioLogado.getTipo_conta().equals("admin")) {
+                if (usuarioLogado.getTipo_conta().equals("cliente")) {
+                    listarEquipamentoDoTreino();
+                } else if (usuarioLogado.getTipo_conta().equals("funcionario") || usuarioLogado.getTipo_conta().equals("admin")) {
                     listarTodosEquipamentos();
                 }
                 break;
             case 11:
-                if (usuarioLogado.getTipo_conta().equals("funcionario") || usuarioLogado.getTipo_conta().equals("admin")) {
+                if (usuarioLogado.getTipo_conta().equals("cliente")) {
+                    atualizarEquipamentoDoTreino();
+                } else if (usuarioLogado.getTipo_conta().equals("funcionario") || usuarioLogado.getTipo_conta().equals("admin")) {
                     listarTodasReservas();
                 }
                 break;
@@ -164,6 +177,13 @@ public class Main {
         }
     }
 
+    public static boolean validarData(String time) {
+        String timePattern = "^([01]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$";
+        Pattern pattern = Pattern.compile(timePattern);
+        Matcher matcher = pattern.matcher(time);
+        return matcher.matches();
+    }
+
     public static void criarNovoTreino() {
         treino novoTreino = new treino();
 
@@ -190,13 +210,14 @@ public class Main {
             System.out.println("ID: " + treinoLoop.getId());
             System.out.println("Nome: " + treinoLoop.getNome());
             System.out.println("Descrição: " + treinoLoop.getDescricao());
+            System.out.println("Duração: " + treinoLoop.getDuracao());
             System.out.println();
         }
     }
 
     public static void editarTreino() {
         try {
-            System.out.print("ID do Treino a ser editado: ");
+            System.out.print("ID do Treino: ");
             int id = Integer.parseInt(scanner.nextLine());
 
             treino treinoAlvo = daoFactory.createTreinoDao().procurarPorId(id);
@@ -229,7 +250,7 @@ public class Main {
             daoFactory.createTreinoDao().atualizar(treinoAlvo);
             System.out.println("Treino atualizado com sucesso!");
         } catch (Exception e) {
-            System.out.println("Erro ao atualizar o treino: " + e.getMessage());
+            System.out.println("Erro ao atualizar o treino");
         }
     }
 
@@ -349,22 +370,34 @@ public class Main {
                     break;
                 case 6:
                     System.out.print("Novo Login: ");
-                    contaAlvo.setEndereco(scanner.nextLine());
+                    contaAlvo.setLogin(scanner.nextLine());
                     break;
                 case 7:
                     System.out.print("Nova Senha: ");
-                    contaAlvo.setEndereco(scanner.nextLine());
+                    contaAlvo.setSenha(scanner.nextLine());
                     break;
                 case 8:
                     if (contaAlvo.getTipo_conta().equals("funcionario") || contaAlvo.getTipo_conta().equals("admin")) {
                         System.out.print("Novo Início do Expediente (HH:MM:SS): ");
-                        contaAlvo.setInicio_expediente_funcionario(scanner.nextLine());
+                        String inicioExpediente = scanner.nextLine();
+                        if (validarData(inicioExpediente)) {
+                            contaAlvo.setInicio_expediente_funcionario(inicioExpediente);
+                        } else {
+                            System.out.println("Formato de horário inválido. Use HH:MM:SS.");
+                            return;
+                        }
                     }
                     break;
                 case 9:
                     if (contaAlvo.getTipo_conta().equals("funcionario") || contaAlvo.getTipo_conta().equals("admin")) {
                         System.out.print("Novo Fim do Expediente (HH:MM:SS): ");
-                        contaAlvo.setFim_expediente_funcionario(scanner.nextLine());
+                        String fimExpediente = scanner.nextLine();
+                        if (validarData(fimExpediente)) {
+                            contaAlvo.setFim_expediente_funcionario(fimExpediente);
+                        } else {
+                            System.out.println("Formato de horário inválido. Use HH:MM:SS.");
+                            return;
+                        }
                     }
                     break;
                 default:
@@ -375,9 +408,11 @@ public class Main {
             daoFactory.createContaDao().atualizar(contaAlvo);
             System.out.println("Conta atualizada com sucesso!");
         } catch (Exception e) {
+            e.printStackTrace();
             System.out.println("Erro ao atualizar a conta: " + e.getMessage());
         }
     }
+
 
     public static void criarNovoEquipamento() {
         equipamento novoEquipamento = new equipamento();
@@ -396,7 +431,7 @@ public class Main {
     public static void listarDadosConta() {
         try {
             System.out.print("ID da conta: ");
-            int id = scanner.nextInt();
+            int id = Integer.parseInt(scanner.nextLine());
 
             conta contaEncontrada = daoFactory.createContaDao().procurarPorId(id);
 
@@ -533,14 +568,14 @@ public class Main {
             daoFactory.createEquipamentoDao().deletarPorId(equipamentoAlvo);
             System.out.println("Equipamento deletado com sucesso!");
         } catch (Exception e) {
-            System.out.println("Erro ao deletar o equipamento: " + e.getMessage());
+            System.out.println("Erro ao deletar o equipamento: ");
         }
     }
 
     public static void listarDadosEquipamento() {
         try {
             System.out.print("ID do equipamento: ");
-            int id = scanner.nextInt();
+            int id = Integer.parseInt(scanner.nextLine());
 
             equipamento equipamentoEncontrado = daoFactory.createEquipamentoDao().procurarPorId(id);
 
@@ -569,8 +604,7 @@ public class Main {
     public static void reservarEquipamento() {
         try {
             System.out.print("ID do equipamento: ");
-            int id_equipamento = scanner.nextInt();
-            scanner.nextLine(); // Consume the newline
+            int id_equipamento = Integer.parseInt(scanner.nextLine());
 
             equipamento equipamentoEncontrado = daoFactory.createEquipamentoDao().procurarPorId(id_equipamento);
 
@@ -580,13 +614,9 @@ public class Main {
             System.out.print("Hora de fim (HH:MM:SS): ");
             String horaFimStr = scanner.nextLine();
 
-            System.out.print("Status da reserva (1 para ativo, 0 para inativo): ");
-            int status = scanner.nextInt();
-
             reserva novaReserva = new reserva();
             novaReserva.setHora_inicio(horaInicioStr);
             novaReserva.setHora_fim(horaFimStr);
-            novaReserva.setStatus(status);
 
             daoFactory.createReservaDao().criarReserva(usuarioLogado, novaReserva, equipamentoEncontrado);
 
@@ -633,7 +663,7 @@ public class Main {
                     break;
                 case 4:
                     System.out.print("Novo Status (1=Ativa, 0=Cancelada): ");
-                    reservaAlvo.setStatus(scanner.nextInt());
+                    reservaAlvo.setStatus(Integer.parseInt(scanner.nextLine()));
                     break;
                 default:
                     System.out.println("Opção inválida.");
@@ -659,6 +689,96 @@ public class Main {
             System.out.println("Hora de Início: " + reservaLoop.getHora_inicio());
             System.out.println("Hora de Fim: " + reservaLoop.getHora_fim());
             System.out.println("Status: " + reservaLoop.getStatus());
+        }
+    }
+
+    public static void adicionarEquipamentoAoTreino() {
+        try{
+            System.out.print("ID do Treino: ");
+            int id_t = Integer.parseInt(scanner.nextLine());
+
+            treino treinoAlvo = daoFactory.createTreinoDao().procurarPorId(id_t);
+
+            if (treinoAlvo == null) {
+                System.out.println("Treino não encontrado no banco de dados.");
+                return;
+            }
+
+            System.out.print("ID do Equipamento: ");
+            int id_e = Integer.parseInt(scanner.nextLine());
+
+            equipamento equipamentoAlvo = daoFactory.createEquipamentoDao().procurarPorId(id_e);
+
+            if (equipamentoAlvo == null) {
+                System.out.println("Equipamento não encontrado no banco de dados.");
+                return;
+            }
+
+            System.out.print("Tempo de uso: ");
+            String tempo = scanner.nextLine();
+
+            uso_de_equipamento equipamento = new uso_de_equipamento();
+
+            equipamento.setTempo_de_uso(tempo);
+
+            daoFactory.createUsoDeEquipamentoDao().inserir(treinoAlvo.getId(), equipamentoAlvo.getId(), equipamento);
+            System.out.println("Equipamento adicionado com sucesso!");
+        } catch (Exception e) {
+            System.out.println("Não foi possível realizar adicionar o equipamento ao treino: ");
+        }
+    }
+
+    public static void removerEquipamentoDoTreino() {
+        try {
+            System.out.print("ID do Treino: ");
+            int id_t = Integer.parseInt(scanner.nextLine());
+            System.out.print("ID do Equipamento: ");
+            int id_e = Integer.parseInt(scanner.nextLine());
+
+            daoFactory.createUsoDeEquipamentoDao().remover(id_t, id_e);
+            System.out.println("Equipamento removido com sucesso!");
+        } catch (Exception e) {
+            System.out.println("Erro ao deletar o equipamento");
+        }
+    }
+
+    public static void listarEquipamentoDoTreino() {
+        try {
+            System.out.print("ID do Treino: ");
+            int id = Integer.parseInt(scanner.nextLine());
+
+            // Usar a função listar para obter os equipamentos do treino
+            List<equipamento> lista = daoFactory.createUsoDeEquipamentoDao().listar(id);
+
+            for (int i = 0; i < lista.size(); i++) {
+                equipamento equipamentoLoop = lista.get(i);
+
+                System.out.println("=== ==Equipamento " + (i + 1) + "== ===");
+                System.out.println("Nome: " + equipamentoLoop.getNome());
+                System.out.println("Tipo: " + equipamentoLoop.getTipo());
+            }
+        } catch (Exception e) {
+            System.out.println("Erro ao listar os equipamentos: " + e.getMessage());
+        }
+    }
+
+
+    public static void atualizarEquipamentoDoTreino() {
+        try {
+            System.out.print("ID do Treino: ");
+            int id_t = Integer.parseInt(scanner.nextLine());
+            System.out.print("ID do Equipamento: ");
+            int id_e = Integer.parseInt(scanner.nextLine());
+
+            uso_de_equipamento alvo = new uso_de_equipamento();
+
+            System.out.println("Novo tempo de uso do equipamento: ");
+            String tempo = scanner.nextLine();
+            alvo.setTempo_de_uso(tempo);
+
+            daoFactory.createUsoDeEquipamentoDao().atualizar(id_t,id_e,alvo);
+        }catch (Exception e) {
+            System.out.println("Erro ao atualizar o treino");
         }
     }
 

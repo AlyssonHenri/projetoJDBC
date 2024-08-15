@@ -4,9 +4,9 @@ import java.util.Objects;
 
 public class reserva {
     private int id;
+    private String data_reserva;
     private String hora_inicio;
     private String hora_fim;
-    private String data_reserva;
     private int status;
     private int conta_cliente;
     private int equipamento;

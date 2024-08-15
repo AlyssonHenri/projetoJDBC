@@ -19,10 +19,11 @@ public class treinoDaoJDBC implements treinoDao {
     public void inserir(treino t, int c) {
         PreparedStatement st = null;
         try {
-            st = conn.prepareStatement("insert into treino(nome, descricao, conta_cliente) values (?, ?, ?)" );
+            st = conn.prepareStatement("insert into treino(nome, descricao, duracao, conta_cliente) values (?, ?, ?, ?)" );
             st.setString(1, t.getNome());
             st.setString(2, t.getDescricao());
-            st.setInt(3, c);
+            st.setString(3, "");
+            st.setInt(4, c);
             st.executeUpdate();
         } catch (SQLException ex) {
             throw new RuntimeException(ex);
@@ -56,7 +57,7 @@ public class treinoDaoJDBC implements treinoDao {
                 st.setString(index++, t.getNome());
             }
             if (t.getDuracao() != null) {
-                st.setInt(index++, Integer.parseInt(t.getDuracao()));
+                st.setTime(index++, java.sql.Time.valueOf(t.getDuracao())); // Handle TIME correctly
             }
 
             st.setInt(index, t.getId());
@@ -88,14 +89,16 @@ public class treinoDaoJDBC implements treinoDao {
         PreparedStatement st = null;
         ResultSet rs = null;
         try {
-            st = conn.prepareStatement("select id, nome, duracao from treino where id = ?" );
+            st = conn.prepareStatement("select id, nome, duracao, descricao, conta_cliente from treino where id = ?");
             st.setInt(1, id);
             rs = st.executeQuery();
             if (rs.next()) {
                 treino t = new treino();
                 t.setId(rs.getInt("id"));
                 t.setNome(rs.getString("nome"));
-                t.setDuracao(String.valueOf(rs.getInt("duracao")));
+                t.setDuracao(rs.getTime("duracao").toString());
+                t.setDescricao(rs.getString("descricao"));
+                t.setConta_cliente(rs.getInt("conta_cliente"));
                 return t;
             }
         } catch (SQLException ex) {
@@ -112,7 +115,7 @@ public class treinoDaoJDBC implements treinoDao {
         PreparedStatement st = null;
         ResultSet rs = null;
         try {
-            st = conn.prepareStatement("select id, nome, duracao from treino were id = ?" );
+            st = conn.prepareStatement("select id, nome, duracao, descricao from treino where conta_cliente = ?" );
             st.setInt(1, id);
             rs = st.executeQuery();
             List<treino> lista = new ArrayList<>();
@@ -120,7 +123,8 @@ public class treinoDaoJDBC implements treinoDao {
                 treino t = new treino();
                 t.setId(rs.getInt("id"));
                 t.setNome(rs.getString("nome"));
-                t.setDuracao(String.valueOf(rs.getInt("duracao")));
+                t.setDuracao(rs.getTime("duracao").toString());
+                t.setDescricao(rs.getString("descricao"));
                 lista.add(t);
             }
             return lista;
@@ -131,4 +135,5 @@ public class treinoDaoJDBC implements treinoDao {
             DB.closeStatment(st);
         }
     }
+
 }

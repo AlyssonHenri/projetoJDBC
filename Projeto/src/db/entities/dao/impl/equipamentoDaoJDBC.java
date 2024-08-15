@@ -118,12 +118,11 @@ public class equipamentoDaoJDBC implements equipamentoDao {
         PreparedStatement st = null;
         ResultSet rs = null;
         try {
-            st = conn.prepareStatement("select id, nome, tipo, status_equipamento, data_registro from equipamento where id = ?");
+            st = conn.prepareStatement("select id, nome, tipo, status_equipamento, data_registro from equipamento");
             rs = st.executeQuery();
             List<equipamento> lista = new ArrayList<>();
             while(rs.next()){
-                equipamento e;
-                e = new equipamento();
+                equipamento e = new equipamento();
                 e.setId(rs.getInt("id"));
                 e.setNome(rs.getString("nome"));
                 e.setTipo(rs.getString("tipo"));

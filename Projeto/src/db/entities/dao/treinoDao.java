@@ -1,5 +1,6 @@
 package db.entities.dao;
 
+import db.entities.equipamento;
 import db.entities.treino;
 
 import java.util.List;

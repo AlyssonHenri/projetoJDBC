@@ -1,69 +1,140 @@
-drop database projetoJDBC;
+-- Remove o banco de dados se já existir e cria um novo
+DROP DATABASE IF EXISTS projetoJDBC;
 
-create database projetoJDBC;
+CREATE DATABASE projetoJDBC;
 
-use projetoJDBC;
+USE projetoJDBC;
 
-create table conta (
-	ID int primary key auto_increment,
-    nome varchar(200) not null,
-    telefone varchar(200) not null,
-    e_mail varchar(200) not null,
-    cpf varchar(20) unique not null,
-    endereco varchar(200),
-    login varchar(200),
-    senha varchar(200),
-    tipo_conta varchar(200),
-    data_registro date,
-    salario_funcionario float,
-    inicio_expediente_funcionario time,
-    fim_expediente_funcionario time,
-    mensalidade_cliente float
+-- Criação das tabelas
+CREATE TABLE conta (
+    ID INT PRIMARY KEY AUTO_INCREMENT,
+    nome VARCHAR(200) NOT NULL,
+    telefone VARCHAR(200) NOT NULL,
+    e_mail VARCHAR(200) NOT NULL,
+    cpf VARCHAR(20) UNIQUE NOT NULL,
+    endereco VARCHAR(200),
+    login VARCHAR(200),
+    senha VARCHAR(200),
+    tipo_conta VARCHAR(200),
+    data_registro DATE,
+    salario_funcionario FLOAT,
+    inicio_expediente_funcionario TIME,
+    fim_expediente_funcionario TIME,
+    mensalidade_cliente FLOAT
 );
 
-create table equipamento (
-	ID int primary key auto_increment,
-    nome varchar(200) not null,
-    tipo varchar(100) not null,
-    status_equipamento boolean not null,
-    conta_criador int,
-    data_registro date,
-    foreign key (conta_criador) references conta(ID)
+CREATE TABLE equipamento (
+    ID INT PRIMARY KEY AUTO_INCREMENT,
+    nome VARCHAR(200) NOT NULL,
+    tipo VARCHAR(100) NOT NULL,
+    status_equipamento BOOLEAN NOT NULL,
+    conta_criador INT,
+    data_registro DATE,
+    FOREIGN KEY (conta_criador) REFERENCES conta(ID)
 );
 
-create table modificacoes (
-	data_modificacao date not null,
-    campo_modificado varchar(200) not null,
-    conta_modificador int,
-    equipamento_modificado int,
-    foreign key (conta_modificador) references conta(ID),
-    foreign key (equipamento_modificado) references equipamento(ID)
+CREATE TABLE modificacoes (
+    data_modificacao DATE NOT NULL,
+    campo_modificado VARCHAR(200) NOT NULL,
+    conta_modificador INT,
+    equipamento_modificado INT,
+    FOREIGN KEY (conta_modificador) REFERENCES conta(ID),
+    FOREIGN KEY (equipamento_modificado) REFERENCES equipamento(ID)
 );
 
-create table treino (
-	ID int primary key auto_increment,
-    nome varchar(200) not null,
-    duracao time not null,
-    descricao varchar(200),     
-    conta_cliente int,
-    foreign key (conta_cliente) references conta(ID)
+CREATE TABLE treino (
+    ID INT PRIMARY KEY AUTO_INCREMENT,
+    nome VARCHAR(200) NOT NULL,
+    duracao TIME NOT NULL,
+    descricao VARCHAR(200),     
+    conta_cliente INT,
+    FOREIGN KEY (conta_cliente) REFERENCES conta(ID)
 );
 
-create table reservas (
-    id int primary key auto_increment
-	data_reserva date not null,
-    tempo_de_uso time not null,
-    status int,
-    conta_cliente int,
-    equipamento int,
-    foreign key (conta_cliente) references conta(ID),
-    foreign key (equipamento) references equipamento(ID)
+CREATE TABLE reservas (
+    ID INT PRIMARY KEY AUTO_INCREMENT,
+    data_reserva DATE NOT NULL,
+    hora_inicio TIME NOT NULL,
+    hora_fim TIME NOT NULL,
+    status INT,
+    conta_cliente INT,
+    equipamento INT,
+    FOREIGN KEY (conta_cliente) REFERENCES conta(ID),
+    FOREIGN KEY (equipamento) REFERENCES equipamento(ID)
 );
 
-create table uso_de_equipamento (
-	tempo_de_uso time not null,
-    treino int,
-    equipamento int,
-    foreign key (treino) references treino(ID),
-    foreign key (equipamento) references equipamento(ID)
+CREATE TABLE uso_de_equipamento (
+    tempo_de_uso TIME NOT NULL,
+    treino INT,
+    equipamento INT,
+    FOREIGN KEY (treino) REFERENCES treino(ID),
+    FOREIGN KEY (equipamento) REFERENCES equipamento(ID)
 );
+
+-- Criação do trigger
+DELIMITER //
+
+CREATE TRIGGER after_equipamento_update
+AFTER UPDATE ON equipamento
+FOR EACH ROW
+BEGIN
+    -- Insere um novo registro na tabela de modificações
+    INSERT INTO modificacoes (data_modificacao, campo_modificado, conta_modificador, equipamento_modificado)
+    VALUES (CURRENT_DATE, 
+            IF(OLD.nome != NEW.nome, 'nome', 
+                IF(OLD.tipo != NEW.tipo, 'tipo',
+                    IF(OLD.status_equipamento != NEW.status_equipamento, 'status_equipamento', 
+                        IF(OLD.conta_criador != NEW.conta_criador, 'conta_criador', 
+                            IF(OLD.data_registro != NEW.data_registro, 'data_registro', 
+                                'unknown'))))), 
+            NEW.conta_criador, 
+            NEW.ID);
+END//
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE TRIGGER after_uso_de_equipamento_insert
+AFTER INSERT ON uso_de_equipamento
+FOR EACH ROW
+BEGIN
+    -- Variável para armazenar a nova duração do treino
+    DECLARE nova_duracao TIME;
+
+    -- Soma o tempo de uso de todos os equipamentos relacionados ao treino
+    SELECT SEC_TO_TIME(SUM(TIME_TO_SEC(tempo_de_uso)))
+    INTO nova_duracao
+    FROM uso_de_equipamento
+    WHERE treino = NEW.treino;
+
+    -- Atualiza a duração do treino na tabela treino
+    UPDATE treino
+    SET duracao = nova_duracao
+    WHERE ID = NEW.treino;
+END//
+
+DELIMITER ;
+
+
+-- População inicial dos dados
+
+-- Inserindo a conta admin
+INSERT INTO conta (nome, telefone, e_mail, cpf, endereco, login, senha, tipo_conta, data_registro)
+VALUES ('Administrador', '123456789', 'admin@gym.com', '11111111111', 'Rua Principal, 123', 'admin', 'admin', 'admin', CURDATE());
+
+-- Exemplo de inserção de outros dados
+INSERT INTO conta (nome, telefone, e_mail, cpf, endereco, login, senha, tipo_conta, data_registro)
+VALUES ('João Silva', '987654321', 'joao@gym.com', '22222222222', 'Rua Secundária, 456', 'joao', 'senha123', 'cliente', CURDATE());
+
+INSERT INTO equipamento (nome, tipo, status_equipamento, conta_criador, data_registro)
+VALUES ('Esteira', 'Cardio', TRUE, 1, CURDATE());
+
+INSERT INTO equipamento (nome, tipo, status_equipamento, conta_criador, data_registro)
+VALUES ('Bicicleta', 'Cardio', TRUE, 1, CURDATE());
+
+INSERT INTO treino (nome, duracao, descricao, conta_cliente)
+VALUES ('Treino A', '01:00:00', 'Treino de resistência', 2);
+
+INSERT INTO reservas (data_reserva, hora_inicio, hora_fim, status, conta_cliente, equipamento)
+VALUES (CURDATE(), '10:00:00', '11:00:00', 1, 2, 1);
