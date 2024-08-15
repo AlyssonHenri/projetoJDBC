@@ -189,7 +189,6 @@ public class contaDaoJDBC implements contaDao {
         }
     }
 
-
     @Override
     public void deletarPorId(conta c) {
         PreparedStatement st = null;
@@ -228,7 +227,6 @@ public class contaDaoJDBC implements contaDao {
                 c.setData_registro(rs.getDate("data_registro"));
                 c.setInicio_expediente_funcionario(String.valueOf(rs.getTime("inicio_expediente_funcionario")));
                 c.setFim_expediente_funcionario(String.valueOf(rs.getTime("fim_expediente_funcionario")));
-                System.out.println(c.toString());
                 return c;
             }
         } catch (SQLException e) {
