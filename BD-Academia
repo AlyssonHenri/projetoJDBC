@@ -8,6 +8,7 @@ USE projetoJDBC;
 -- Criação das tabelas
 CREATE TABLE conta (
     ID INT PRIMARY KEY AUTO_INCREMENT,
+    foto longblob,
     nome VARCHAR(200) NOT NULL,
     telefone VARCHAR(200) NOT NULL,
     e_mail VARCHAR(200) NOT NULL,
@@ -26,6 +27,7 @@ CREATE TABLE conta (
 CREATE TABLE equipamento (
     ID INT PRIMARY KEY AUTO_INCREMENT,
     nome VARCHAR(200) NOT NULL,
+    imagem longblob,
     tipo VARCHAR(100) NOT NULL,
     status_equipamento BOOLEAN NOT NULL,
     conta_criador INT,
