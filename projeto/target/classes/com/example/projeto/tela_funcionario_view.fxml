@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="193.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.projeto.TelaFuncionarioController">
+   <children>
+      <MenuBar layoutY="1.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+        <menus>
+          <Menu mnemonicParsing="false" text="Contas">
+            <items>
+              <MenuItem fx:id="novoliente" mnemonicParsing="false" onAction="#onNovoClienteClick" text="Novo cliente" />
+                  <MenuItem mnemonicParsing="false" onAction="#onNovoFuncionarioClick" text="Novo funcionario" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Equipamentos">
+            <items>
+              <MenuItem mnemonicParsing="false" onAction="#onNovoEquipamentoClick" text="Cadastrar" />
+                  <MenuItem mnemonicParsing="false" text="Editar" />
+                  <MenuItem mnemonicParsing="false" text="Deletar" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Reservas">
+            <items>
+              <MenuItem mnemonicParsing="false" text="Sobre" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+      <ImageView fitHeight="101.0" fitWidth="104.0" layoutX="14.0" layoutY="51.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="248.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="485.0" AnchorPane.topAnchor="51.0">
+         <image>
+            <Image url="@../../../img/OIP.jpg" />
+         </image>
+      </ImageView>
+      <Text fx:id="nomeUsuario" layoutX="122.0" layoutY="64.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Nome de usuário" />
+      <TableView layoutX="238.0" layoutY="48.0" prefHeight="209.0" prefWidth="322.0">
+        <columns>
+          <TableColumn prefWidth="75.0" text="Hora" />
+            <TableColumn prefWidth="100.0" text="Cliente" />
+          <TableColumn prefWidth="146.0" text="Equipamento" />
+        </columns>
+      </TableView>
+   </children>
+</AnchorPane>
