@@ -1,46 +1,88 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="193.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.projeto.TelaFuncionarioController">
+<AnchorPane prefHeight="521.0" prefWidth="751.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.projeto.TelaFuncionarioController">
    <children>
-      <MenuBar layoutY="1.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
-        <menus>
-          <Menu mnemonicParsing="false" text="Contas">
-            <items>
-              <MenuItem fx:id="novoliente" mnemonicParsing="false" onAction="#onNovoClienteClick" text="Novo cliente" />
-                  <MenuItem mnemonicParsing="false" onAction="#onNovoFuncionarioClick" text="Novo funcionario" />
-            </items>
-          </Menu>
-          <Menu mnemonicParsing="false" text="Equipamentos">
-            <items>
-              <MenuItem mnemonicParsing="false" onAction="#onNovoEquipamentoClick" text="Cadastrar" />
-                  <MenuItem mnemonicParsing="false" text="Editar" />
-                  <MenuItem mnemonicParsing="false" text="Deletar" />
-            </items>
-          </Menu>
-          <Menu mnemonicParsing="false" text="Reservas">
-            <items>
-              <MenuItem mnemonicParsing="false" text="Sobre" />
-            </items>
-          </Menu>
-        </menus>
-      </MenuBar>
-      <ImageView fitHeight="101.0" fitWidth="104.0" layoutX="14.0" layoutY="51.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="248.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="485.0" AnchorPane.topAnchor="51.0">
-         <image>
-            <Image url="@../../../img/OIP.jpg" />
-         </image>
-      </ImageView>
-      <Text fx:id="nomeUsuario" layoutX="122.0" layoutY="64.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Nome de usuário" />
-      <TableView layoutX="238.0" layoutY="48.0" prefHeight="209.0" prefWidth="322.0">
-        <columns>
-          <TableColumn prefWidth="75.0" text="Hora" />
-            <TableColumn prefWidth="100.0" text="Cliente" />
-          <TableColumn prefWidth="146.0" text="Equipamento" />
-        </columns>
-      </TableView>
+      <SplitPane dividerPositions="0.255" prefHeight="521.0" prefWidth="751.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <items>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="519.0" prefWidth="177.0">
+               <children>
+                  <ImageView fitHeight="165.0" fitWidth="169.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="342.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="572.0" AnchorPane.topAnchor="14.0">
+                     <image>
+                        <Image url="@../../../img/OIP.jpg" />
+                     </image>
+                  </ImageView>
+                  <Text fx:id="nomeUsuario" strokeType="OUTSIDE" strokeWidth="0.0" text="Nome de usuário" />
+                  <Text fx:id="nomeUsuario" layoutX="25.0" layoutY="213.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" textAlignment="CENTER" wrappingWidth="143.7294921875" AnchorPane.bottomAnchor="302.93408203125" AnchorPane.leftAnchor="25.0" AnchorPane.rightAnchor="19.2705078125" AnchorPane.topAnchor="200.93310546875" />
+               </children>
+            </AnchorPane>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="519.0" prefWidth="535.0">
+               <children>
+                  <TabPane layoutX="-10.0" prefHeight="519.0" prefWidth="565.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <tabs>
+                        <Tab text="Reservas">
+                          <content>
+                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="488.0" prefWidth="556.0" />
+                          </content>
+                        </Tab>
+                      <Tab text="Equipamentos">
+                        <content>
+                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="490.0" prefWidth="569.0">
+                                 <children>
+                                    <ToolBar prefHeight="40.0" prefWidth="555.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                                      <items>
+                                        <Button mnemonicParsing="false" onAction="#onNovoEquipamentoClick" text="Novo equipamento" />
+                                          <Button mnemonicParsing="false" text="Button" />
+                                          <Button mnemonicParsing="false" text="Button" />
+                                      </items>
+                                    </ToolBar>
+                                    <TableView layoutY="40.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="40.0">
+                                      <columns>
+                                        <TableColumn prefWidth="259.0" text="C1" />
+                                        <TableColumn prefWidth="295.0" text="C2" />
+                                      </columns>
+                                    </TableView>
+                                 </children>
+                              </AnchorPane>
+                        </content>
+                      </Tab>
+                      <Tab text="Contas">
+                        <content>
+                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                 <children>
+                                    <ToolBar prefHeight="40.0" prefWidth="555.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                                      <items>
+                                        <Button mnemonicParsing="false" onAction="#onNovoClienteClick" text="Novo cliente" />
+                                          <Button mnemonicParsing="false" onAction="#onNovoFuncionarioClick" text="Novo funcionario" />
+                                          <Button mnemonicParsing="false" text="Button" />
+                                      </items>
+                                    </ToolBar>
+                                    <TableView layoutY="40.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="40.0">
+                                      <columns>
+                                        <TableColumn prefWidth="265.0" text="C1" />
+                                        <TableColumn prefWidth="289.0" text="C2" />
+                                      </columns>
+                                    </TableView>
+                                 </children>
+                              </AnchorPane>
+                        </content>
+                      </Tab>
+                    </tabs>
+                  </TabPane>
+               </children>
+            </AnchorPane>
+        </items>
+      </SplitPane>
    </children>
 </AnchorPane>
