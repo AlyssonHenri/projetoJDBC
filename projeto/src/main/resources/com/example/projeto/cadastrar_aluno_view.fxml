@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+
+<AnchorPane stylesheets="@dark-theme.css" prefHeight="306.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.projeto.ApplicationController">
+   <children>
+      <GridPane layoutX="23.0" layoutY="23.0" prefHeight="162.0" prefWidth="328.0" AnchorPane.leftAnchor="23.0" AnchorPane.rightAnchor="249.0" AnchorPane.topAnchor="23.0">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="296.00001220703126" minWidth="10.0" prefWidth="105.59998779296876" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="232.00002441406247" minWidth="2.399987792968716" prefWidth="192.80001220703122" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <Label text="Nome:" />
+            <Label text="CPF:" GridPane.rowIndex="1" />
+            <Label text="Data de Nascimento:" GridPane.rowIndex="2" />
+            <TextField fx:id="nome" GridPane.columnIndex="1" />
+            <TextField fx:id="cpf" prefHeight="26.0" prefWidth="135.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <DatePicker fx:id="data" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+         </children>
+      </GridPane>
+      <ImageView fx:id="foto" fitHeight="150.0" fitWidth="200.0" layoutX="396.0" layoutY="30.0" onMouseClicked="#onFotoClick" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../../img/OIP.jpg" />
+         </image>
+      </ImageView>
+      <Button fx:id="salvar" layoutX="261.0" layoutY="228.0" mnemonicParsing="false" onAction="#onSalvarClick" text="Salvar" />
+   </children>
+</AnchorPane>
