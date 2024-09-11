@@ -29,7 +29,7 @@
             <TextField fx:id="login" GridPane.rowIndex="1" />
             <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Senha:" GridPane.rowIndex="2" />
             <PasswordField fx:id="senha" GridPane.rowIndex="3" />
-            <Button fx:id="botaoLogin" mnemonicParsing="false" onAction="#onLoginClick" text="Login" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="CENTER" />
+            <Button fx:id="botaoLogin" defaultButton="true" mnemonicParsing="false" onAction="#onLoginClick" text="Login" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="CENTER" />
          </children>
       </GridPane>
       <ImageView fitHeight="150.0" fitWidth="167.0" layoutX="20.0" layoutY="31.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="29.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="177.0" AnchorPane.topAnchor="31.0">

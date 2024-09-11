@@ -6,7 +6,11 @@ import com.example.projeto.model.entities.Equipamento;
 import com.example.projeto.model.entities.Reserva;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
@@ -14,6 +18,8 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -56,6 +62,8 @@ public class TelaFuncionarioController {
     private TextField buscaEquipamentoField;
     @FXML
     private TextField buscaContaField;
+    @FXML
+    private ImageView logOut;
 
     // valores para receber e usar os dados do usuario logado
     private Conta usuarioLogado;
@@ -154,12 +162,25 @@ public class TelaFuncionarioController {
     private void showContextMenuConta(Conta conta, MouseEvent event) {
         ContextMenu contextMenu = new ContextMenu();
 
-        MenuItem deletar = new MenuItem("Deletar");
-        deletar.setOnAction(e -> DAOFactory.createContaDao().deletarPorId(conta));
+        if( conta.getId() != usuarioLogado.getId() ){
+            MenuItem deletar = new MenuItem("Deletar");
+            deletar.setOnAction(e -> DAOFactory.createContaDao().deletarPorId(conta));
 
-        contextMenu.getItems().addAll(deletar);
+            contextMenu.getItems().addAll(deletar);
+        }
 
-        // Exibe o menu no ponto do clique
+        MenuItem editar = new MenuItem("Editar");
+        editar.setOnAction(e -> {
+            try {
+                onEditarContaClick(conta);
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
+
+
+        contextMenu.getItems().addAll(editar);
+
         contextMenu.show(tabelaReserva, event.getScreenX(), event.getScreenY());
     }
 
@@ -172,7 +193,6 @@ public class TelaFuncionarioController {
 
         contextMenu.getItems().addAll(deletar);
 
-        // Exibe o menu no ponto do clique
         contextMenu.show(tabelaReserva, event.getScreenX(), event.getScreenY());
     }
 
@@ -268,5 +288,46 @@ public class TelaFuncionarioController {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @FXML
+    void onLogOutClick() throws IOException {
+        Stage tela = (Stage) logOut.getScene().getWindow();
+        tela.close();
+
+        stage = Application.newStage("application_view.fxml","Login");
+    }
+
+    @FXML
+    void onEditarContaClick(Conta c) throws IOException {
+        FXMLLoader loader;
+
+        if (c.getTipo_conta().equalsIgnoreCase("cliente")) {
+            loader = new FXMLLoader(getClass().getResource("editar_conta_cliente_view.fxml"));
+        } else {
+            loader = new FXMLLoader(getClass().getResource("editar_conta_funcionario_view.fxml"));
+        }
+
+        Parent root = loader.load();
+        Scene scene = new Scene(root);
+
+        // salva o controlador da nova tela
+        Object controller = loader.getController();
+
+        // passa os dados do usuarioLogado para o controlador
+        if (controller instanceof EditarClienteController) {
+            ((EditarClienteController) controller).usuarioSelecionado(c);
+        } else if (controller instanceof EditarFuncionarioController) {
+            ((EditarFuncionarioController) controller).usuarioSelecionado(c);
+        }
+
+        // config do Stage e exibir a nova tela
+        Stage stage = new Stage();
+        stage.setScene(scene);
+
+        String titulo = "Editando " + c.getNome();
+        stage.setTitle(titulo);
+
+        stage.show();
     }
 }
