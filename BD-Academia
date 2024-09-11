@@ -12,7 +12,7 @@ CREATE TABLE conta (
     nome VARCHAR(200) NOT NULL,
     telefone VARCHAR(200) NOT NULL,
     e_mail VARCHAR(200) NOT NULL,
-    cpf VARCHAR(20) UNIQUE NOT NULL,
+    cpf VARCHAR(100) UNIQUE NOT NULL,
     endereco VARCHAR(200),
     login VARCHAR(200),
     senha VARCHAR(200),
