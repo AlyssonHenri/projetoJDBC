@@ -436,7 +436,9 @@ public class TelaFuncionarioController {
             equipamentoEdit.setStatus_equipamento(0);
             DAOFactory.createEquipamentoDao().atualizar(equipamentoEdit,1);
         }
+
         loadTabelaEquipamentos();
+        tabelaEquipamentos.refresh();
     }
 
     @FXML
@@ -453,5 +455,7 @@ public class TelaFuncionarioController {
             DAOFactory.createReservaDao().editarReserva(reservaEdit);
         }
 
+        loadTabelaReservas();
+        tabelaReserva.refresh();
     }
 }
