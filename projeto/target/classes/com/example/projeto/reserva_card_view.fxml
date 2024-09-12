@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane fx:id="cardReserva" prefHeight="201.0" prefWidth="249.0" xmlns:fx="http://javafx.com/fxml" fx:controller="com.example.projeto.TelaClienteController">
+    <children>
+        <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#4d4f51" height="102.0" layoutX="14.0" layoutY="21.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="222.0" />
+        <Text fx:id="reservaTitle" fill="WHITE" layoutX="24.0" layoutY="50.0" strokeType="OUTSIDE" strokeWidth="0.0" />
+        <Text fx:id="reservaStart" fill="WHITE" layoutX="23.0" layoutY="76.0" strokeType="OUTSIDE" strokeWidth="0.0" />
+        <Text fx:id="reservaEnd" fill="WHITE" layoutX="24.0" layoutY="103.0" strokeType="OUTSIDE" strokeWidth="0.0" />
+        <ImageView fx:id="deletarReserva" fitHeight="16.0" fitWidth="22.0" layoutX="210.0" layoutY="98.0" pickOnBounds="true" preserveRatio="true">
+            <image>
+                <Image url="@../../../img/delete.png" />
+            </image>
+        </ImageView>
+    </children>
+</AnchorPane>

@@ -31,43 +31,41 @@ public class EquipamentoDaoJDBC implements EquipamentoDAO {
     }
 
     @Override
-    public void atualizar(Equipamento e) {
+    public void atualizar(Equipamento e, int alt) throws SQLException {
         PreparedStatement st = null;
-        StringBuilder sql = new StringBuilder("update equipamento set ");
-        boolean primeiroCampo = true;
 
-        try {
-            if (e.getNome() != null) {
-                sql.append(primeiroCampo ? "" : ", ").append("nome = ?");
-                primeiroCampo = false;
-            }
-            if (e.getTipo() != null) {
-                sql.append(primeiroCampo ? "" : ", ").append("tipo = ?");
-                primeiroCampo = false;
-            }
+        if(alt != 1){
+            String sql = "update equipamento set nome = ?, tipo = ? where id = ?";
 
-            sql.append(primeiroCampo ? "" : ", ").append("status_equipamento = ?");
+            List<Object> parametros = new ArrayList<>();
 
-            sql.append(" where id = ?");
+            parametros.add(e.getNome());
+            parametros.add(e.getTipo());
+            parametros.add(e.getId());
 
-            st = conn.prepareStatement(sql.toString());
-            int index = 1;
+            st = conn.prepareStatement(sql);
 
-            if (e.getNome() != null) {
-                st.setString(index++, e.getNome());
-            }
-            if (e.getTipo() != null) {
-                st.setString(index++, e.getTipo());
+            for (int i = 0; i < parametros.size(); i++) {
+                st.setObject(i + 1, parametros.get(i));
             }
 
-            st.setInt(index, e.getId());
+        }else{
+            String sql = "update equipamento set status_equipamento = ? where id = ?";
 
-            st.executeUpdate();
-        } catch (SQLException erro) {
-            throw new RuntimeException(erro);
-        } finally {
-            DB.closeStatement(st);
+            List<Object> parametros = new ArrayList<>();
+
+            parametros.add(e.getStatus_equipamento());
+            parametros.add(e.getId());
+
+            st = conn.prepareStatement(sql);
+
+            for (int i = 0; i < parametros.size(); i++) {
+                st.setObject(i + 1, parametros.get(i));
+            }
         }
+        st.executeUpdate();
+        DB.closeStatement(st);
+
     }
 
     @Override

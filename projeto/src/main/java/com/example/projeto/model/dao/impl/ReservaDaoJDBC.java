@@ -23,8 +23,7 @@ public class ReservaDaoJDBC implements ReservaDAO {
 
         try {
             st = this.conn.prepareStatement("select id from reservas where data_reserva = ? and equipamento = ? and status = 1 and ((hora_inicio < ? and hora_fim > ?) or (hora_inicio < ? and hora_fim > ?))");
-            Date dataAtual = new Date(System.currentTimeMillis());
-            st.setDate(1, dataAtual);
+            st.setDate(1, Date.valueOf(v.getData_reserva()));
             st.setInt(2, e.getId());
             st.setTime(3, Time.valueOf(v.getHora_fim()));
             st.setTime(4, Time.valueOf(v.getHora_inicio()));
@@ -36,7 +35,7 @@ public class ReservaDaoJDBC implements ReservaDAO {
             }
 
             st = this.conn.prepareStatement("insert into reservas(data_reserva, hora_inicio, hora_fim, status, conta_cliente, equipamento) values(?, ?, ?, ?, ?, ?)");
-            st.setDate(1, dataAtual);
+            st.setDate(1, Date.valueOf(v.getData_reserva()));
             st.setTime(2, Time.valueOf(v.getHora_inicio()));
             st.setTime(3, Time.valueOf(v.getHora_fim()));
             st.setInt(4, 1);
@@ -52,52 +51,23 @@ public class ReservaDaoJDBC implements ReservaDAO {
 
     }
 
-    public void editarReserva(Reserva v) {
+    public void editarReserva(Reserva r) throws SQLException {
         PreparedStatement st = null;
-        StringBuilder sql = new StringBuilder("UPDATE reservas SET ");
-        boolean primeiroCampo = true;
+        String sql = "update reservas set status = ? where id = ?";
 
-        try {
-            if (v.getData_reserva() != null) {
-                sql.append(primeiroCampo ? "" : ", ").append("data_reserva = ?");
-                primeiroCampo = false;
-            }
+        List<Object> parametros = new ArrayList<>();
 
-            if (v.getHora_inicio() != null) {
-                sql.append(primeiroCampo ? "" : ", ").append("hora_inicio = ?");
-                primeiroCampo = false;
-            }
+        parametros.add(r.getStatus());
+        parametros.add(r.getId());
 
-            if (v.getHora_fim() != null) {
-                sql.append(primeiroCampo ? "" : ", ").append("hora_fim = ?");
-                primeiroCampo = false;
-            }
+        st = conn.prepareStatement(sql);
 
-            sql.append(primeiroCampo ? "" : ", ").append("status = ?");
-            sql.append(" WHERE id = ?");
-            st = this.conn.prepareStatement(sql.toString());
-            int index = 1;
-            if (v.getData_reserva() != null) {
-                st.setDate(index++, Date.valueOf(v.getData_reserva()));
-            }
-
-            if (v.getHora_inicio() != null) {
-                st.setTime(index++, Time.valueOf(v.getHora_inicio()));
-            }
-
-            if (v.getHora_fim() != null) {
-                st.setTime(index++, Time.valueOf(v.getHora_fim()));
-            }
-
-            st.setInt(index++, v.getStatus());
-            st.setInt(index, v.getId());
-            st.executeUpdate();
-        } catch (SQLException var9) {
-            throw new RuntimeException(var9);
-        } finally {
-            DB.closeStatement(st);
+        for (int i = 0; i < parametros.size(); i++) {
+            st.setObject(i + 1, parametros.get(i));
         }
 
+        st.executeUpdate();
+        DB.closeStatement(st);
     }
 
     @Override
@@ -152,6 +122,38 @@ public class ReservaDaoJDBC implements ReservaDAO {
 
         try {
             st = this.conn.prepareStatement("select id, equipamento, conta_cliente, data_reserva, hora_inicio, hora_fim, status from reservas");
+            rs = st.executeQuery();
+            List<Reserva> lista = new ArrayList();
+
+            while(rs.next()) {
+                Reserva v = new Reserva();
+                v.setId(rs.getInt("id"));
+                v.setEquipamento(rs.getInt("equipamento"));
+                v.setConta_cliente(rs.getInt("conta_cliente"));
+                v.setData_reserva(rs.getString("data_reserva"));
+                v.setHora_inicio(rs.getString("hora_inicio"));
+                v.setHora_fim(rs.getString("hora_fim"));
+                v.setStatus(rs.getInt("status"));
+                lista.add(v);
+            }
+
+            ArrayList var10 = (ArrayList) lista;
+            return var10;
+        } catch (SQLException var8) {
+            throw new RuntimeException(var8);
+        } finally {
+            DB.closeResultSet(rs);
+            DB.closeStatement(st);
+        }
+    }
+
+    public List<Reserva> listarConta(Conta c) {
+        PreparedStatement st = null;
+        ResultSet rs = null;
+        System.out.println(c);
+        try {
+            st = this.conn.prepareStatement("select id, equipamento, conta_cliente, data_reserva, hora_inicio, hora_fim, status from reservas where conta_cliente = ?");
+            st.setInt(1, c.getId());
             rs = st.executeQuery();
             List<Reserva> lista = new ArrayList();
 

@@ -109,3 +109,131 @@
 .context-menu .menu-item:hover {
     -fx-background-color: #555555;
 }
+
+.split-pane {
+    -fx-background-color: #3c3f41;
+    -fx-border-width: 1px;
+}
+
+.split-pane .split-pane-divider {
+    -fx-background-color: #2b2b2b;
+    -fx-border-width: 1px;
+}
+
+.split-pane:hover .split-pane-divider {
+    -fx-background-color: #555555;
+}
+
+.split-pane .split-pane-divider:hover {
+    -fx-background-color: #555555;
+}
+
+.menu-button {
+    -fx-background-color: #3c3f41; /* Fundo escuro */
+    -fx-text-fill: #ffffff; /* Cor do texto */
+    -fx-border-color: #a9a9a9; /* Cor da borda */
+    -fx-border-width: 1px;
+    -fx-border-radius: 10px; /* Bordas arredondadas */
+    -fx-background-radius: 10px; /* Fundo arredondado */
+
+}
+
+.menu-button:hover {
+    -fx-background-color: #555555;
+}
+
+.menu-button:focused {
+    -fx-border-color: #ffffff;
+}
+
+.menu-button .arrow {
+    -fx-background-color: #ffffff;
+}
+
+.date-picker {
+    -fx-background-color: #3c3f41;
+    -fx-text-fill: #ffffff;
+    -fx-border-radius: 10px;
+}
+
+.date-picker:hover {
+    -fx-background-color: #555555;
+}
+
+.date-picker .arrow-button {
+    -fx-background-color: #3c3f41;
+    -fx-border-color: #a9a9a9;
+}
+
+.date-picker .arrow-button:hover {
+    -fx-background-color: #555555;
+}
+
+.date-picker-popup {
+    -fx-background-color: #2b2b2b;
+    -fx-border-color: #a9a9a9;
+}
+
+.date-picker-popup .calendar {
+    -fx-background-color: #3c3f41;
+    -fx-text-fill: #ffffff;
+}
+
+.date-picker-popup .day-cell {
+    -fx-background-color: #3c3f41;
+    -fx-text-fill: #ffffff;
+    -fx-border-color: #2b2b2b;
+}
+
+.date-picker-popup .day-cell:hover {
+    -fx-background-color: #555555;
+}
+
+.date-picker-popup .day-cell:selected {
+    -fx-background-color: #a9a9a9;
+    -fx-text-fill: #000000;
+}
+
+.date-picker-popup .month-year-label {
+    -fx-background-color: #2b2b2b;
+    -fx-text-fill: #ffffff;
+}
+
+/* Estilo da área superior do calendário (controle de mês e ano) */
+.date-picker-popup .header {
+    -fx-background-color: #2b2b2b;
+}
+
+/* Estilo do rótulo de mês e ano */
+.date-picker-popup .label {
+    -fx-background-color: #2b2b2b;
+    -fx-text-fill: #ffffff;
+}
+
+/* Estilo da área superior do calendário que contém os botões e rótulo de mês e ano */
+.date-picker-popup .month-year-pane {
+    -fx-background-color: #2b2b2b; /* Cor de fundo da área superior */
+}
+
+/* Estilo dos botões de navegação (esquerda e direita) */
+.date-picker-popup .left-arrow,
+.date-picker-popup .right-arrow {
+    -fx-background-color: #2b2b2b; /* Fundo dos botões */
+    -fx-text-fill: #ffffff;         /* Cor das setas */
+}
+
+.date-picker-popup .left-arrow:hover,
+.date-picker-popup .right-arrow:hover {
+    -fx-background-color: #555555; /* Fundo ao passar o mouse */
+}
+
+/* Estilo do rótulo de mês e ano */
+.date-picker-popup .label {
+    -fx-background-color: #2b2b2b; /* Fundo do rótulo */
+    -fx-text-fill: #ffffff;         /* Cor do texto */
+}
+
+/* Esconde o campo de exibição da data selecionada */
+.date-picker-popup .text-field {
+    -fx-background-color: #2b2b2b;
+}

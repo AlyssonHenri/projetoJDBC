@@ -17,6 +17,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Locale;
 
@@ -63,7 +64,7 @@ public class TelaFuncionarioController {
     @FXML
     private TextField buscaContaField;
     @FXML
-    private ImageView logOut;
+    private Button logOut;
 
     // valores para receber e usar os dados do usuario logado
     private Conta usuarioLogado;
@@ -153,6 +154,28 @@ public class TelaFuncionarioController {
         MenuItem deletar = new MenuItem("Deletar");
         deletar.setOnAction(e -> DAOFactory.createReservaDao().deletarPorId(reserva));
 
+        if(reserva.getStatus() == 1){
+            MenuItem desativar = new MenuItem("Desativar");
+            desativar.setOnAction(e -> {
+                try {
+                    onMudarEstadoReserva(reserva, 1);
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
+            });
+            contextMenu.getItems().addAll(desativar);
+        }else{
+            MenuItem ativar = new MenuItem("Ativar");
+            ativar.setOnAction(e -> {
+                try {
+                    onMudarEstadoReserva(reserva, 0);
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
+            });
+            contextMenu.getItems().addAll(ativar);
+        }
+
         contextMenu.getItems().addAll(deletar);
 
         // Exibe o menu no ponto do clique
@@ -187,11 +210,41 @@ public class TelaFuncionarioController {
     private void showContextMenuEquipamento(Equipamento equipamento, MouseEvent event) {
         ContextMenu contextMenu = new ContextMenu();
 
-
         MenuItem deletar = new MenuItem("Deletar");
         deletar.setOnAction(e -> DAOFactory.createEquipamentoDao().deletarPorId(equipamento));
 
-        contextMenu.getItems().addAll(deletar);
+        MenuItem editar = new MenuItem("Editar");
+        editar.setOnAction(e -> {
+            try {
+                onEditarEquipamentoClick(equipamento);
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
+
+        if(equipamento.getStatus_equipamento() == 1){
+            MenuItem desativar = new MenuItem("Desativar");
+            desativar.setOnAction(e -> {
+                try {
+                    onMudarEstadoEquipamento(equipamento, 1);
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
+            });
+            contextMenu.getItems().addAll(desativar);
+        }else{
+            MenuItem ativar = new MenuItem("Ativar");
+            ativar.setOnAction(e -> {
+                try {
+                    onMudarEstadoEquipamento(equipamento, 0);
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
+            });
+            contextMenu.getItems().addAll(ativar);
+        }
+
+        contextMenu.getItems().addAll(deletar, editar);
 
         contextMenu.show(tabelaReserva, event.getScreenX(), event.getScreenY());
     }
@@ -311,7 +364,6 @@ public class TelaFuncionarioController {
         Parent root = loader.load();
         Scene scene = new Scene(root);
 
-        // salva o controlador da nova tela
         Object controller = loader.getController();
 
         // passa os dados do usuarioLogado para o controlador
@@ -329,5 +381,58 @@ public class TelaFuncionarioController {
         stage.setTitle(titulo);
 
         stage.show();
+    }
+
+    @FXML
+    void onEditarEquipamentoClick(Equipamento e) throws IOException {
+        FXMLLoader loader;
+
+        loader = new FXMLLoader(getClass().getResource("editar_equipamento_view.fxml"));
+
+        Parent root = loader.load();
+        Scene scene = new Scene(root);
+
+        Object controller = loader.getController();
+
+        ((EditarEquipamentoController) controller).setEquipamentoSelecionado(e);
+
+        Stage stage = new Stage();
+        stage.setScene(scene);
+
+        String titulo = "Editando " + e.getNome();
+        stage.setTitle(titulo);
+
+        stage.show();
+    }
+
+    @FXML
+    void onMudarEstadoEquipamento(Equipamento e, int alt) throws SQLException {
+        Equipamento equipamentoEdit = new Equipamento();
+
+        equipamentoEdit.setId(e.getId());
+
+        if(alt == 0){
+            equipamentoEdit.setStatus_equipamento(1);
+            DAOFactory.createEquipamentoDao().atualizar(equipamentoEdit,1);
+        }else{
+            equipamentoEdit.setStatus_equipamento(0);
+            DAOFactory.createEquipamentoDao().atualizar(equipamentoEdit,1);
+        }
+    }
+
+    @FXML
+    void onMudarEstadoReserva(Reserva r, int alt) throws SQLException {
+        Reserva reservaEdit = new Reserva();
+
+        reservaEdit.setId(r.getId());
+
+        if(alt == 0){
+            reservaEdit.setStatus(1);
+            DAOFactory.createReservaDao().editarReserva(reservaEdit);
+        }else{
+            reservaEdit.setStatus(0);
+            DAOFactory.createReservaDao().editarReserva(reservaEdit);
+        }
+
     }
 }

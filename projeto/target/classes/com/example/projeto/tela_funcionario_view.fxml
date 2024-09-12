@@ -23,14 +23,18 @@
                   <Image url="@../../../img/adm.png" />
                </image></ImageView>
                 <Text fx:id="nomeUsuario" fill="WHITE" text="Username" textAlignment="CENTER" wrappingWidth="143.729" AnchorPane.leftAnchor="25.0" AnchorPane.topAnchor="200.933" />
-                <ImageView fx:id="logOut" fitHeight="16.0" fitWidth="12.0" onMousePressed="#onLogOutClick" preserveRatio="true" AnchorPane.bottomAnchor="8.0" AnchorPane.leftAnchor="8.0">
-                    <image>
-                        <Image url="@../../../img/logout.png" />
-                    </image>
-               <cursor>
-                  <Cursor fx:constant="HAND" />
-               </cursor>
-                </ImageView>
+            <Button fx:id="logOut" layoutX="14.0" layoutY="475.0" mnemonicParsing="false" onAction="#onLogOutClick" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="143.0" AnchorPane.topAnchor="475.0">
+               <graphic>
+                      <ImageView fitHeight="16.0" fitWidth="18.0" onMousePressed="#onLogOutClick" preserveRatio="true">
+                          <image>
+                              <Image url="@../../../img/logout.png" />
+                          </image>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                      </ImageView>
+               </graphic>
+            </Button>
             </children>
         </AnchorPane>
         <AnchorPane layoutX="191.0" minHeight="0.0" minWidth="0.0" prefHeight="519.0" prefWidth="560.0" stylesheets="@style.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="191.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">

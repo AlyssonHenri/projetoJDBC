@@ -10,8 +10,7 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-
-<AnchorPane stylesheets="@style.css" prefHeight="331.0" prefWidth="562.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.projeto.CadastrarFuncionarioController">
+<AnchorPane prefHeight="331.0" prefWidth="562.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.projeto.CadastrarFuncionarioController">
    <children>
       <GridPane layoutX="24.0" layoutY="18.0" prefHeight="297.0" prefWidth="328.0">
          <columnConstraints>
@@ -56,7 +55,7 @@
       <Button fx:id="salvar" layoutX="429.0" layoutY="214.0" mnemonicParsing="false" onAction="#onSalvarClick" text="Cadastrar!" />
       <ImageView fx:id="foto" fitHeight="135.0" fitWidth="155.0" layoutX="396.0" layoutY="43.0" onMouseClicked="#onFotoClick" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@../../../img/OIP.jpg" />
+            <Image url="@../../../img/adm.png" />
          </image>
       </ImageView>
    </children>
