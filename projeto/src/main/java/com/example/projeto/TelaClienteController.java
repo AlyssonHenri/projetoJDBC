@@ -4,6 +4,7 @@ import com.example.projeto.model.dao.DAOFactory;
 import com.example.projeto.model.entities.Conta;
 import com.example.projeto.model.entities.Equipamento;
 import com.example.projeto.model.entities.Reserva;
+import com.example.projeto.util.Alertas;
 import com.example.projeto.util.Hora;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -17,6 +18,8 @@ import javafx.stage.Stage;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.sql.Date;
+import java.sql.SQLException;
 import java.util.List;
 
 public class TelaClienteController {
@@ -55,7 +58,7 @@ public class TelaClienteController {
         }
 
         populateEquipamentosMenu();
-        populateReservasGrid();
+        popularReservas();
     }
 
     private void populateEquipamentosMenu() {
@@ -77,7 +80,7 @@ public class TelaClienteController {
         }
     }
 
-    private void populateReservasGrid() {
+    private void popularReservas() {
         try {
             reservas.getChildren().clear();
 
@@ -87,31 +90,36 @@ public class TelaClienteController {
             int col = 0;
 
             for (Reserva reserva : reservasList) {
-                // Create a new FXMLLoader instance for each card
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("reserva_card_view.fxml"));
+                if(reserva.getStatus() != 0){
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("reserva_card_view.fxml"));
 
-                // Load the FXML for this card
-                AnchorPane reservaCard = loader.load();
+                    AnchorPane reservaCard = loader.load();
 
-                // Access and set the controls in the loaded FXML
-                Text reservaTitle = (Text) reservaCard.lookup("#reservaTitle");
-                Text reservaStart = (Text) reservaCard.lookup("#reservaStart");
-                Text reservaEnd = (Text) reservaCard.lookup("#reservaEnd");
-                ImageView deletarReserva = (ImageView) reservaCard.lookup("#deletarReserva");
+                    Text reservaTitle = (Text) reservaCard.lookup("#reservaTitle");
+                    Text reservaStart = (Text) reservaCard.lookup("#reservaStart");
+                    Text reservaEnd = (Text) reservaCard.lookup("#reservaEnd");
+                    ImageView deletarReserva = (ImageView) reservaCard.lookup("#deletarReserva");
 
-                reservaTitle.setText("Reserva de " + reserva.getEquipamento());
-                reservaStart.setText("Das: " + reserva.getHora_inicio());
-                reservaEnd.setText("Até: " + reserva.getHora_fim());
+                    reservaTitle.setText("Reserva de " + DAOFactory.createEquipamentoDao().procurarPorId(reserva.getEquipamento()).getNome());
+                    reservaStart.setText("Das: " + reserva.getHora_inicio());
+                    reservaEnd.setText("Até: " + reserva.getHora_fim());
 
-                deletarReserva.setOnMouseClicked(event -> {
-                    System.out.println("Deleting reservation: " + reserva.getId());
-                });
+                    deletarReserva.setOnMouseClicked(event -> {
+                        reserva.setStatus(0);
+                        try {
+                            DAOFactory.createReservaDao().editarReserva(reserva);
+                            popularReservas();
+                        } catch (SQLException e) {
+                            throw new RuntimeException(e);
+                        }
+                    });
 
-                reservas.add(reservaCard, col++, row);
+                    reservas.add(reservaCard, col++, row);
 
-                if (col >= 2) {
-                    col = 0;
-                    row++;
+                    if (col >= 2) {
+                        col = 0;
+                        row++;
+                    }
                 }
             }
         } catch (IOException e) {
@@ -119,35 +127,26 @@ public class TelaClienteController {
         }
     }
 
-    private AnchorPane createReservaCard(Reserva reserva) {
-        AnchorPane card = new AnchorPane();
-        // Configure the card with reservation details
-        // Example: Set card's text fields or labels with reservation information
-
-        Text reservaText = new Text("Data: " + reserva.getData_reserva() + "\n" +
-                "Início: " + reserva.getHora_inicio() + "\n" +
-                "Fim: " + reserva.getHora_fim());
-        // Add the Text or other elements to the card
-        card.getChildren().add(reservaText);
-
-        // You can add an ImageView or other controls here as needed
-        // e.g., card.getChildren().add(new ImageView(new Image("image/path.png")));
-
-        return card;
-    }
-
     @FXML
     void onNovaReserva() {
+        Date dataAtual = new Date(System.currentTimeMillis());
         Reserva reserva = new Reserva();
 
         reserva.setData_reserva(String.valueOf(data.getValue()));
         reserva.setHora_inicio(Hora.formatarHora(horaInicio.getText()));
         reserva.setHora_fim(Hora.formatarHora(horaFim.getText()));
 
-        DAOFactory.createReservaDao().criarReserva(usuarioLogado, reserva, equipamentoSelecionado);
+        if (data.getValue().isBefore(dataAtual.toLocalDate())) {
+            Alertas.mostrarAlerta(null, null, "Data inválida.", Alert.AlertType.INFORMATION);
+        } else if (Integer.parseInt(horaInicio.getText()) > Integer.parseInt(horaFim.getText())) {
+            Alertas.mostrarAlerta(null, null, "Horas inválidas.", Alert.AlertType.INFORMATION);
+        } else if (equipamentoSelecionado == null) {
+            Alertas.mostrarAlerta(null, null, "Selecione um equipamento.", Alert.AlertType.INFORMATION);
+        } else{
+            DAOFactory.createReservaDao().criarReserva(usuarioLogado, reserva, equipamentoSelecionado);
+        }
 
-        // Refresh the reservations grid after creating a new reservation
-        populateReservasGrid();
+        popularReservas();
     }
 
     @FXML

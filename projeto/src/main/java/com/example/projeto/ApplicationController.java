@@ -67,7 +67,6 @@ public class ApplicationController {
             stage.show(); // Mostrar a nova tela
 
         } else {
-            // Exibir alerta de login incorreto
             Alertas.mostrarAlerta(null, null, "Login ou senha incorretos. Tente novamente.", Alert.AlertType.INFORMATION);
         }
 

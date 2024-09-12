@@ -129,12 +129,12 @@
 }
 
 .menu-button {
-    -fx-background-color: #3c3f41; /* Fundo escuro */
-    -fx-text-fill: #ffffff; /* Cor do texto */
-    -fx-border-color: #a9a9a9; /* Cor da borda */
+    -fx-background-color: #3c3f41;
+    -fx-text-fill: #ffffff;
+    -fx-border-color: #a9a9a9;
     -fx-border-width: 1px;
-    -fx-border-radius: 10px; /* Bordas arredondadas */
-    -fx-background-radius: 10px; /* Fundo arredondado */
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
 
 }
 
@@ -199,41 +199,45 @@
     -fx-text-fill: #ffffff;
 }
 
-/* Estilo da área superior do calendário (controle de mês e ano) */
 .date-picker-popup .header {
     -fx-background-color: #2b2b2b;
 }
 
-/* Estilo do rótulo de mês e ano */
 .date-picker-popup .label {
     -fx-background-color: #2b2b2b;
     -fx-text-fill: #ffffff;
 }
 
-/* Estilo da área superior do calendário que contém os botões e rótulo de mês e ano */
-.date-picker-popup .month-year-pane {
-    -fx-background-color: #2b2b2b; /* Cor de fundo da área superior */
+
+.date-picker-popup .month-year-pane .week-pane {
+    -fx-background-color: #2b2b2b;
 }
 
-/* Estilo dos botões de navegação (esquerda e direita) */
+
 .date-picker-popup .left-arrow,
 .date-picker-popup .right-arrow {
-    -fx-background-color: #2b2b2b; /* Fundo dos botões */
-    -fx-text-fill: #ffffff;         /* Cor das setas */
+    -fx-background-color: #2b2b2b;
+    -fx-text-fill: #ffffff;
 }
 
 .date-picker-popup .left-arrow:hover,
 .date-picker-popup .right-arrow:hover {
-    -fx-background-color: #555555; /* Fundo ao passar o mouse */
+    -fx-background-color: #555555;
 }
 
-/* Estilo do rótulo de mês e ano */
 .date-picker-popup .label {
-    -fx-background-color: #2b2b2b; /* Fundo do rótulo */
-    -fx-text-fill: #ffffff;         /* Cor do texto */
+    -fx-background-color: #2b2b2b;
+    -fx-text-fill: #ffffff;
 }
 
-/* Esconde o campo de exibição da data selecionada */
 .date-picker-popup .text-field {
+    -fx-background-color: #2b2b2b;
+}
+
+.combo-box .list-cell {
+    -fx-text-fill: white;
+    -fx-background-color: #2b2b2b;
+}
+.combo-box-base .arrow-button .arrow {
     -fx-background-color: #2b2b2b;
 }

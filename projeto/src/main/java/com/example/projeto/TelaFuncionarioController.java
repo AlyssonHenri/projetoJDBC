@@ -147,6 +147,24 @@ public class TelaFuncionarioController {
         });
     }
 
+    public void loadTabelaReservas(){
+        List<Reserva> lista = DAOFactory.createReservaDao().listarTodas();
+        ObservableList<Reserva> reservasFiltradas = FXCollections.observableArrayList(lista);
+        tabelaReserva.setItems(reservasFiltradas);
+    }
+
+    public void loadTabelaContas(){
+        List<Conta> lista = DAOFactory.createContaDao().procurarTodos();
+        ObservableList<Conta> contasList = FXCollections.observableArrayList(lista);
+        tabelaContas.setItems(contasList);
+    }
+
+    public void loadTabelaEquipamentos(){
+        List<Reserva> lista = DAOFactory.createReservaDao().listarTodas();
+        ObservableList<Reserva> reservasList = FXCollections.observableArrayList(lista);
+        tabelaReserva.setItems(reservasList);
+    }
+
     // métodos para exibir os menu de contexto
     private void showContextMenuReserva(Reserva reserva, MouseEvent event) {
         ContextMenu contextMenu = new ContextMenu();
@@ -418,6 +436,7 @@ public class TelaFuncionarioController {
             equipamentoEdit.setStatus_equipamento(0);
             DAOFactory.createEquipamentoDao().atualizar(equipamentoEdit,1);
         }
+        loadTabelaEquipamentos();
     }
 
     @FXML

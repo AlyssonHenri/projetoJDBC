@@ -1,22 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.DatePicker?>
-<?import javafx.scene.control.MenuButton?>
-<?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.SplitPane?>
-<?import javafx.scene.control.Tab?>
-<?import javafx.scene.control.TabPane?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.text.Text?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="575.0" prefWidth="694.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.projeto.TelaClienteController">
+<AnchorPane prefHeight="575.0" prefWidth="694.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.projeto.TelaClienteController">
    <children>
       <AnchorPane prefHeight="580.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="494.0" AnchorPane.topAnchor="0.0">
          <children>
@@ -27,7 +16,7 @@
             </ImageView>
             <Text fx:id="nomeUsuario" fill="WHITE" layoutX="40.0" layoutY="192.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Username" />
             <Text fx:id="e_mail" fill="WHITE" layoutX="40.0" layoutY="227.0" strokeType="OUTSIDE" strokeWidth="0.0" text="E-mail" />
-            <Button fx:id="logOut" layoutX="14.0" layoutY="540.0" mnemonicParsing="false" onAction="#onLogOutClick" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="152.0" AnchorPane.topAnchor="540.0">
+            <Button fx:id="logOut" layoutX="14.0" layoutY="540.0" mnemonicParsing="false" onAction="#onLogOutClick">
                <graphic>
                   <ImageView fitHeight="16.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -82,11 +71,6 @@
                                 </items>
                               </SplitPane>
                            </children></AnchorPane>
-                  </content>
-                </Tab>
-                <Tab text="Treinos">
-                  <content>
-                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
                   </content>
                 </Tab>
               </tabs>
