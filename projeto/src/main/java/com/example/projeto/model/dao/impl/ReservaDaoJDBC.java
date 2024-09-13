@@ -150,7 +150,6 @@ public class ReservaDaoJDBC implements ReservaDAO {
     public List<Reserva> listarConta(Conta c) {
         PreparedStatement st = null;
         ResultSet rs = null;
-        System.out.println(c);
         try {
             st = this.conn.prepareStatement("select id, equipamento, conta_cliente, data_reserva, hora_inicio, hora_fim, status from reservas where conta_cliente = ?");
             st.setInt(1, c.getId());

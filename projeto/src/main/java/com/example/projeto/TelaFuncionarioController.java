@@ -4,6 +4,8 @@ import com.example.projeto.model.dao.DAOFactory;
 import com.example.projeto.model.entities.Conta;
 import com.example.projeto.model.entities.Equipamento;
 import com.example.projeto.model.entities.Reserva;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -24,6 +26,7 @@ import java.util.Locale;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.util.Duration;
 
 public class TelaFuncionarioController {
     // elemento da tabela de reservas
@@ -70,7 +73,22 @@ public class TelaFuncionarioController {
     private Conta usuarioLogado;
     @FXML
     private Text nomeUsuario;
+
+    @FXML
+    private TabPane tabPane;
+
+    @FXML
+    private Tab tabReservas;
+
+    @FXML
+    private Tab tabEquipamentos;
+
+    @FXML
+    private Tab tabContas;
+
     private static Stage stage;
+
+    private ContextMenu contextMenuAbertoReserva;
 
     public void setUsuarioLogado(Conta usuarioLogado) {
         this.usuarioLogado = usuarioLogado;
@@ -145,127 +163,159 @@ public class TelaFuncionarioController {
             });
             return row;
         });
+
+        carregarTabelasIniciais();
+
+        Timeline timeline = new Timeline(
+                new KeyFrame(Duration.seconds(30), event -> {
+                    atualizarTabelaAtual();
+                })
+        );
+        timeline.setCycleCount(Timeline.INDEFINITE);
+        timeline.play();
     }
 
-    public void loadTabelaReservas(){
-        List<Reserva> lista = DAOFactory.createReservaDao().listarTodas();
-        ObservableList<Reserva> reservasFiltradas = FXCollections.observableArrayList(lista);
-        tabelaReserva.setItems(reservasFiltradas);
+    private void carregarTabelasIniciais() {
+        if (tabPane.getSelectionModel().getSelectedItem().equals(tabReservas)) {
+            onClickReservas();
+        } else if (tabPane.getSelectionModel().getSelectedItem().equals(tabEquipamentos)) {
+            onClickEquipamentos();
+        } else if (tabPane.getSelectionModel().getSelectedItem().equals(tabContas)) {
+            onClickContas();
+        }
     }
 
-    public void loadTabelaContas(){
-        List<Conta> lista = DAOFactory.createContaDao().procurarTodos();
-        ObservableList<Conta> contasList = FXCollections.observableArrayList(lista);
-        tabelaContas.setItems(contasList);
-    }
+    private void atualizarTabelaAtual() {
+        Tab abaSelecionada = tabPane.getSelectionModel().getSelectedItem();
 
-    public void loadTabelaEquipamentos(){
-        List<Reserva> lista = DAOFactory.createReservaDao().listarTodas();
-        ObservableList<Reserva> reservasList = FXCollections.observableArrayList(lista);
-        tabelaReserva.setItems(reservasList);
+        if (abaSelecionada.equals(tabReservas)) {
+            onClickReservas();
+        } else if (abaSelecionada.equals(tabEquipamentos)) {
+            onClickEquipamentos();
+        } else if (abaSelecionada.equals(tabContas)) {
+            onClickContas();
+        }
     }
 
     // métodos para exibir os menu de contexto
     private void showContextMenuReserva(Reserva reserva, MouseEvent event) {
+        if (contextMenuAbertoReserva != null && contextMenuAbertoReserva.isShowing()) {
+            contextMenuAbertoReserva.hide();
+        }
+
         ContextMenu contextMenu = new ContextMenu();
 
         MenuItem deletar = new MenuItem("Deletar");
-        deletar.setOnAction(e -> DAOFactory.createReservaDao().deletarPorId(reserva));
+        deletar.setOnAction(e -> {
+            DAOFactory.createReservaDao().deletarPorId(reserva);
+            onClickReservas();
+        });
 
-        if(reserva.getStatus() == 1){
+        if (reserva.getStatus() == 1) {
             MenuItem desativar = new MenuItem("Desativar");
             desativar.setOnAction(e -> {
                 try {
                     onMudarEstadoReserva(reserva, 1);
+                    onClickReservas();
                 } catch (SQLException ex) {
                     throw new RuntimeException(ex);
                 }
             });
-            contextMenu.getItems().addAll(desativar);
-        }else{
+            contextMenu.getItems().add(desativar);
+        } else {
             MenuItem ativar = new MenuItem("Ativar");
             ativar.setOnAction(e -> {
                 try {
                     onMudarEstadoReserva(reserva, 0);
+                    onClickReservas();
                 } catch (SQLException ex) {
                     throw new RuntimeException(ex);
                 }
             });
-            contextMenu.getItems().addAll(ativar);
+            contextMenu.getItems().add(ativar);
         }
 
-        contextMenu.getItems().addAll(deletar);
-
-        // Exibe o menu no ponto do clique
+        contextMenu.getItems().add(deletar);
         contextMenu.show(tabelaReserva, event.getScreenX(), event.getScreenY());
+        contextMenuAbertoReserva = contextMenu;
     }
+
 
     private void showContextMenuConta(Conta conta, MouseEvent event) {
         ContextMenu contextMenu = new ContextMenu();
 
-        if( conta.getId() != usuarioLogado.getId() ){
+        if (conta.getId() != usuarioLogado.getId()) {
             MenuItem deletar = new MenuItem("Deletar");
-            deletar.setOnAction(e -> DAOFactory.createContaDao().deletarPorId(conta));
-
-            contextMenu.getItems().addAll(deletar);
+            deletar.setOnAction(e -> {
+                DAOFactory.createContaDao().deletarPorId(conta);
+                onClickContas();
+            });
+            contextMenu.getItems().add(deletar);
         }
 
         MenuItem editar = new MenuItem("Editar");
         editar.setOnAction(e -> {
             try {
                 onEditarContaClick(conta);
+                onClickContas();
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
         });
 
-
-        contextMenu.getItems().addAll(editar);
-
-        contextMenu.show(tabelaReserva, event.getScreenX(), event.getScreenY());
+        contextMenu.getItems().add(editar);
+        contextMenu.show(tabelaContas, event.getScreenX(), event.getScreenY());
     }
+
+
 
     private void showContextMenuEquipamento(Equipamento equipamento, MouseEvent event) {
         ContextMenu contextMenu = new ContextMenu();
 
         MenuItem deletar = new MenuItem("Deletar");
-        deletar.setOnAction(e -> DAOFactory.createEquipamentoDao().deletarPorId(equipamento));
+        deletar.setOnAction(e -> {
+            DAOFactory.createEquipamentoDao().deletarPorId(equipamento);
+            onClickEquipamentos();
+        });
 
         MenuItem editar = new MenuItem("Editar");
         editar.setOnAction(e -> {
             try {
                 onEditarEquipamentoClick(equipamento);
+                onClickEquipamentos();
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
         });
 
-        if(equipamento.getStatus_equipamento() == 1){
+        if (equipamento.getStatus_equipamento() == 1) {
             MenuItem desativar = new MenuItem("Desativar");
             desativar.setOnAction(e -> {
                 try {
                     onMudarEstadoEquipamento(equipamento, 1);
+                    onClickEquipamentos();
                 } catch (SQLException ex) {
                     throw new RuntimeException(ex);
                 }
             });
-            contextMenu.getItems().addAll(desativar);
-        }else{
+            contextMenu.getItems().add(desativar);
+        } else {
             MenuItem ativar = new MenuItem("Ativar");
             ativar.setOnAction(e -> {
                 try {
                     onMudarEstadoEquipamento(equipamento, 0);
+                    onClickEquipamentos();
                 } catch (SQLException ex) {
                     throw new RuntimeException(ex);
                 }
             });
-            contextMenu.getItems().addAll(ativar);
+            contextMenu.getItems().add(ativar);
         }
 
         contextMenu.getItems().addAll(deletar, editar);
-
-        contextMenu.show(tabelaReserva, event.getScreenX(), event.getScreenY());
+        contextMenu.show(tabelaEquipamentos, event.getScreenX(), event.getScreenY());
     }
+
 
     @FXML
     void onClickReservas(){
@@ -436,9 +486,6 @@ public class TelaFuncionarioController {
             equipamentoEdit.setStatus_equipamento(0);
             DAOFactory.createEquipamentoDao().atualizar(equipamentoEdit,1);
         }
-
-        loadTabelaEquipamentos();
-        tabelaEquipamentos.refresh();
     }
 
     @FXML
@@ -454,8 +501,5 @@ public class TelaFuncionarioController {
             reservaEdit.setStatus(0);
             DAOFactory.createReservaDao().editarReserva(reservaEdit);
         }
-
-        loadTabelaReservas();
-        tabelaReserva.refresh();
     }
 }

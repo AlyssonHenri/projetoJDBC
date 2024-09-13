@@ -6,6 +6,8 @@ import com.example.projeto.model.entities.Equipamento;
 import com.example.projeto.model.entities.Reserva;
 import com.example.projeto.util.Alertas;
 import com.example.projeto.util.Hora;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
@@ -15,6 +17,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -58,7 +61,23 @@ public class TelaClienteController {
         }
 
         populateEquipamentosMenu();
-        popularReservas();
+
+        // Adiciona listener para garantir que o GridPane já tenha uma Scene associada
+        reservas.sceneProperty().addListener((obs, oldScene, newScene) -> {
+            if (newScene != null) {
+                popularReservas();
+                iniciarAtualizacaoPeriodica();
+            }
+        });
+    }
+
+
+    private void iniciarAtualizacaoPeriodica() {
+        Timeline timeline = new Timeline(
+                new KeyFrame(Duration.seconds(10), event -> popularReservas())
+        );
+        timeline.setCycleCount(Timeline.INDEFINITE);
+        timeline.play();
     }
 
     private void populateEquipamentosMenu() {
@@ -81,18 +100,28 @@ public class TelaClienteController {
     }
 
     private void popularReservas() {
+        reservas.getChildren().clear();
+
+        List<Reserva> reservasList = DAOFactory.createReservaDao().listarConta(usuarioLogado);
+
+        // listener para alterações de tamanho da janela
+        Stage currentStage = (Stage) reservas.getScene().getWindow();
+        currentStage.widthProperty().addListener((obs, oldVal, newVal) -> {
+            ajustarGrid(reservasList, newVal.doubleValue());
+        });
+
+        ajustarGrid(reservasList, currentStage.getWidth());  // Configuração inicial da grid
+    }
+
+    private void ajustarGrid(List<Reserva> reservasList, double larguraJanela) {
+        int numColunas = calcularNumColunas(larguraJanela);
+        int row = 0;
+        int col = 0;
+
         try {
-            reservas.getChildren().clear();
-
-            List<Reserva> reservasList = DAOFactory.createReservaDao().listarConta(usuarioLogado);
-
-            int row = 0;
-            int col = 0;
-
             for (Reserva reserva : reservasList) {
-                if(reserva.getStatus() != 0){
+                if (reserva.getStatus() != 0) {
                     FXMLLoader loader = new FXMLLoader(getClass().getResource("reserva_card_view.fxml"));
-
                     AnchorPane reservaCard = loader.load();
 
                     Text reservaTitle = (Text) reservaCard.lookup("#reservaTitle");
@@ -116,7 +145,7 @@ public class TelaClienteController {
 
                     reservas.add(reservaCard, col++, row);
 
-                    if (col >= 2) {
+                    if (col >= numColunas) {
                         col = 0;
                         row++;
                     }
@@ -126,6 +155,18 @@ public class TelaClienteController {
             e.printStackTrace();
         }
     }
+
+    private int calcularNumColunas(double larguraJanela) {
+        double larguraCard = 300; // Defina conforme o tamanho dos componentes
+        int numColunas = (int) (larguraJanela / larguraCard);
+
+        // Limita o número de colunas mínimo e máximo
+        if (numColunas < 1) {
+            numColunas = 1;  // No mínimo, uma coluna
+        }
+        return numColunas;
+    }
+
 
     @FXML
     void onNovaReserva() {
@@ -142,11 +183,10 @@ public class TelaClienteController {
             Alertas.mostrarAlerta(null, null, "Horas inválidas.", Alert.AlertType.INFORMATION);
         } else if (equipamentoSelecionado == null) {
             Alertas.mostrarAlerta(null, null, "Selecione um equipamento.", Alert.AlertType.INFORMATION);
-        } else{
+        } else {
             DAOFactory.createReservaDao().criarReserva(usuarioLogado, reserva, equipamentoSelecionado);
+            popularReservas();
         }
-
-        popularReservas();
     }
 
     @FXML

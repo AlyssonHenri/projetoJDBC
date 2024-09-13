@@ -39,9 +39,9 @@
         </AnchorPane>
         <AnchorPane layoutX="191.0" minHeight="0.0" minWidth="0.0" prefHeight="519.0" prefWidth="560.0" stylesheets="@style.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="191.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <children>
-                <TabPane prefHeight="519.0" prefWidth="554.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                <TabPane fx:id="tabPane" prefHeight="519.0" prefWidth="554.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <tabs>
-                        <Tab onSelectionChanged="#onClickReservas" text="Reservas">
+                        <Tab fx:id="tabReservas" onSelectionChanged="#onClickReservas" text="Reservas">
                             <content>
                                 <AnchorPane prefHeight="488.0" prefWidth="556.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                     <children>
@@ -75,7 +75,7 @@
                                 </AnchorPane>
                             </content>
                         </Tab>
-                        <Tab onSelectionChanged="#onClickEquipamentos" text="Equipamentos">
+                        <Tab fx:id="tabEquipamentos" onSelectionChanged="#onClickEquipamentos" text="Equipamentos">
                               <content>
                                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="490.0" prefWidth="569.0">
                                       <children>
@@ -112,7 +112,7 @@
                                   </AnchorPane>
                               </content>
                         </Tab>
-                        <Tab fx:id="contas" onSelectionChanged="#onClickContas" text="Contas">
+                        <Tab fx:id="tabContas" onSelectionChanged="#onClickContas" text="Contas">
                               <content>
                                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="560.0">
                                       <children>
