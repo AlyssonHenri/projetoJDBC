@@ -65,16 +65,14 @@ public class TelaClienteController {
         // Adiciona listener para garantir que o GridPane já tenha uma Scene associada
         reservas.sceneProperty().addListener((obs, oldScene, newScene) -> {
             if (newScene != null) {
-                popularReservas();
                 iniciarAtualizacaoPeriodica();
             }
         });
     }
 
-
     private void iniciarAtualizacaoPeriodica() {
         Timeline timeline = new Timeline(
-                new KeyFrame(Duration.seconds(10), event -> popularReservas())
+                new KeyFrame(Duration.seconds(3), event -> {popularReservas();populateEquipamentosMenu();})
         );
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();

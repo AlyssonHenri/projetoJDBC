@@ -16,12 +16,11 @@ public class EquipamentoDaoJDBC implements EquipamentoDAO {
     public void inserir(Equipamento e) {
         PreparedStatement st = null;
         try {
-            st = conn.prepareStatement("insert into equipamento(nome,tipo,imagem,status_equipamento,data_registro) values (?,?,?,?,?)");
+            st = conn.prepareStatement("insert into equipamento(nome,tipo,status_equipamento,data_registro) values (?,?,?,?)");
             st.setString(1, e.getNome());
             st.setString(2, e.getTipo());
-            st.setBytes(3, e.getImagem());
-            st.setString(4, String.valueOf(e.getStatus_equipamento()));
-            st.setDate(5, (Date) e.getData_registro());
+            st.setString(3, String.valueOf(e.getStatus_equipamento()));
+            st.setDate(4, (Date) e.getData_registro());
             st.executeUpdate();
         } catch (SQLException ex) {
             throw new RuntimeException(ex);

@@ -33,9 +33,13 @@ public class TelaFuncionarioController {
     @FXML
     private TableView<Reserva> tabelaReserva;
     @FXML
+    private TableColumn<Reserva, String> statusReservaColum;
+    @FXML
     private TableColumn<Reserva, String> nomeClienteColumn;
     @FXML
     private TableColumn<Reserva, String> nomeEquipamentoClienteColumn;
+    @FXML
+    private TableColumn<Reserva, String> diaReservaColumn;
     @FXML
     private TableColumn<Reserva, String> inicioReservaClienteColumn;
     @FXML
@@ -98,6 +102,16 @@ public class TelaFuncionarioController {
     @FXML
     void initialize() {
         //tabela de reservas
+        statusReservaColum.setCellValueFactory(cellData -> {
+            int status = cellData.getValue().getStatus();
+            if (status == 0) {
+                return new SimpleStringProperty("Inativo");
+            } else if (status == 1) {
+                return new SimpleStringProperty("Ativo");
+            } else {
+                return new SimpleStringProperty("Desconhecido");
+            }
+        });
         nomeClienteColumn.setCellValueFactory(cellData -> {
             Conta conta = DAOFactory.createContaDao().procurarPorId(cellData.getValue().getConta_cliente());
             return new SimpleStringProperty(conta.getNome());
@@ -106,6 +120,7 @@ public class TelaFuncionarioController {
             Equipamento equipamento = DAOFactory.createEquipamentoDao().procurarPorId(cellData.getValue().getEquipamento());
             return new SimpleStringProperty(equipamento.getNome());
         });
+        diaReservaColumn.setCellValueFactory(new PropertyValueFactory<>("data_reserva"));
         inicioReservaClienteColumn.setCellValueFactory(new PropertyValueFactory<>("hora_inicio"));
         fimReservaClienteColumn.setCellValueFactory(new PropertyValueFactory<>("hora_fim"));
 
@@ -167,7 +182,7 @@ public class TelaFuncionarioController {
         carregarTabelasIniciais();
 
         Timeline timeline = new Timeline(
-                new KeyFrame(Duration.seconds(30), event -> {
+                new KeyFrame(Duration.seconds(2), event -> {
                     atualizarTabelaAtual();
                 })
         );
@@ -318,7 +333,7 @@ public class TelaFuncionarioController {
 
 
     @FXML
-    void onClickReservas(){
+    public void onClickReservas(){
         List<Reserva> lista = DAOFactory.createReservaDao().listarTodas();
         ObservableList<Reserva> reservasList = FXCollections.observableArrayList(lista);
         tabelaReserva.setItems(reservasList);
