@@ -93,6 +93,9 @@ public class TelaFuncionarioController {
     private static Stage stage;
 
     private ContextMenu contextMenuAbertoReserva;
+    private ContextMenu contextMenuAbertoEquipamento;
+    private ContextMenu contextMenuAbertoConta;
+
 
     public void setUsuarioLogado(Conta usuarioLogado) {
         this.usuarioLogado = usuarioLogado;
@@ -127,7 +130,6 @@ public class TelaFuncionarioController {
         //tabela de equipamentos
         nomeEquipamentoColumn.setCellValueFactory(new PropertyValueFactory<>("nome"));
         tipoEquipamentoColumn.setCellValueFactory(new PropertyValueFactory<>("tipo"));
-        // tive que fazer isso aqui pra fazer a conversão da booleana pra string ficar exibida na tabela
         statusEquipamentoColumn.setCellValueFactory(cellData -> {
             int status = cellData.getValue().getStatus_equipamento();
             if (status == 0) {
@@ -205,10 +207,13 @@ public class TelaFuncionarioController {
 
         if (abaSelecionada.equals(tabReservas)) {
             onClickReservas();
+            onBuscaReserva();
         } else if (abaSelecionada.equals(tabEquipamentos)) {
             onClickEquipamentos();
+            onBuscaEquipamento();
         } else if (abaSelecionada.equals(tabContas)) {
             onClickContas();
+            onBuscaConta();
         }
     }
 
@@ -257,6 +262,10 @@ public class TelaFuncionarioController {
 
 
     private void showContextMenuConta(Conta conta, MouseEvent event) {
+        if (contextMenuAbertoConta != null && contextMenuAbertoConta.isShowing()) {
+            contextMenuAbertoConta.hide();
+        }
+
         ContextMenu contextMenu = new ContextMenu();
 
         if (conta.getId() != usuarioLogado.getId()) {
@@ -280,11 +289,15 @@ public class TelaFuncionarioController {
 
         contextMenu.getItems().add(editar);
         contextMenu.show(tabelaContas, event.getScreenX(), event.getScreenY());
+
+        contextMenuAbertoConta = contextMenu;
     }
 
-
-
     private void showContextMenuEquipamento(Equipamento equipamento, MouseEvent event) {
+        if (contextMenuAbertoEquipamento != null && contextMenuAbertoEquipamento.isShowing()) {
+            contextMenuAbertoEquipamento.hide();
+        }
+
         ContextMenu contextMenu = new ContextMenu();
 
         MenuItem deletar = new MenuItem("Deletar");
@@ -329,6 +342,8 @@ public class TelaFuncionarioController {
 
         contextMenu.getItems().addAll(deletar, editar);
         contextMenu.show(tabelaEquipamentos, event.getScreenX(), event.getScreenY());
+
+        contextMenuAbertoEquipamento = contextMenu;
     }
 
 

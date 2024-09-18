@@ -15,7 +15,9 @@ import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 
 public class CadastrarFuncionarioController {
     @FXML
@@ -45,6 +47,11 @@ public class CadastrarFuncionarioController {
     File file;
 
     @FXML
+    public void initialize() {
+        foto.setImage(new Image("file:src/main/resources/img/adm.png"));
+    }
+
+    @FXML
     void onFotoClick() {
         FileChooser fc = new FileChooser();
 
@@ -60,6 +67,14 @@ public class CadastrarFuncionarioController {
 
     @FXML
     public void onSalvarClick() throws IOException {
+        if (nome.getText().isEmpty() || telefone.getText().isEmpty() || e_mail.getText().isEmpty() ||
+                cpf.getText().isEmpty() || endereco.getText().isEmpty() || login.getText().isEmpty() ||
+                senha.getText().isEmpty() || inicio_exp.getText().isEmpty() || fim_exp.getText().isEmpty()) {
+
+            Alertas.mostrarAlerta("Erro", null, "Por favor, preencha todos os campos obrigatórios.", Alert.AlertType.ERROR);
+            return;
+        }
+
         Conta novaConta = new Conta();
 
         novaConta.setNome(nome.getText());
@@ -74,9 +89,12 @@ public class CadastrarFuncionarioController {
         novaConta.setInicio_expediente_funcionario(Hora.formatarHora(inicio_exp.getText()));
         novaConta.setFim_expediente_funcionario(Hora.formatarHora(fim_exp.getText()));
 
-        if(file!=null){
+        if (file != null) {
             byte[] fileBytes = Files.readAllBytes(file.toPath());
             novaConta.setFoto(fileBytes);
+        } else {
+            Image imagemPadrao = new Image("file:src/main/resources/img/adm.png");
+            novaConta.setFoto(imageToByteArray(imagemPadrao));
         }
 
         novaConta.setData_registro(new java.sql.Date(System.currentTimeMillis()));
@@ -88,4 +106,15 @@ public class CadastrarFuncionarioController {
         Stage fechar = (Stage) salvar.getScene().getWindow();
         fechar.close();
     }
+    private byte[] imageToByteArray(Image imagem) throws IOException {
+        File tempFile = File.createTempFile("temp_image", ".png");
+        try (InputStream input = getClass().getResourceAsStream("/img/adm.png")) {
+            if (input == null) {
+                throw new IOException("Resource not found: /img/adm.png");
+            }
+            Files.copy(input, tempFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        }
+        return Files.readAllBytes(tempFile.toPath());
+    }
+
 }

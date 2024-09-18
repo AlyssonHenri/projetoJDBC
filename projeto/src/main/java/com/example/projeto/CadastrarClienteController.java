@@ -14,7 +14,9 @@ import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 
 public class CadastrarClienteController {
     @FXML
@@ -40,9 +42,13 @@ public class CadastrarClienteController {
     File file;
 
     @FXML
+    public void initialize() {
+        foto.setImage(new Image("file:src/main/resources/img/account.png"));
+    }
+
+    @FXML
     void onFotoClick() {
         FileChooser fc = new FileChooser();
-
         FileChooser.ExtensionFilter imageFilter = new FileChooser.ExtensionFilter("Image Files", "*.jpg", "*.png", "*.jpeg");
         fc.getExtensionFilters().add(imageFilter);
 
@@ -55,8 +61,15 @@ public class CadastrarClienteController {
 
     @FXML
     public void onSalvarClick() throws IOException {
-        Conta novaConta = new Conta();
+        if (nome.getText().isEmpty() || telefone.getText().isEmpty() || e_mail.getText().isEmpty() ||
+                cpf.getText().isEmpty() || endereco.getText().isEmpty() || login.getText().isEmpty() ||
+                senha.getText().isEmpty() || mensalidade.getText().isEmpty()) {
 
+            Alertas.mostrarAlerta("Erro", null, "Por favor, preencha todos os campos obrigatórios.", Alert.AlertType.ERROR);
+            return;
+        }
+
+        Conta novaConta = new Conta();
         novaConta.setNome(nome.getText());
         novaConta.setTelefone(telefone.getText());
         novaConta.setE_mail(e_mail.getText());
@@ -66,9 +79,12 @@ public class CadastrarClienteController {
         novaConta.setSenha(senha.getText());
         novaConta.setTipo_conta("cliente");
 
-        if(file!=null){
+        if (file != null) {
             byte[] fileBytes = Files.readAllBytes(file.toPath());
             novaConta.setFoto(fileBytes);
+        } else {
+            Image imagemPadrao = new Image("file:src/main/resources/img/account.png");
+            novaConta.setFoto(imageToByteArray(imagemPadrao));
         }
 
         novaConta.setData_registro(new java.sql.Date(System.currentTimeMillis()));
@@ -76,9 +92,21 @@ public class CadastrarClienteController {
 
         DAOFactory.createContaDao().inserirCliente(novaConta);
 
-        Alertas.mostrarAlerta(null,null,"Cliente cadastrado com sucesso!", Alert.AlertType.INFORMATION);
+        Alertas.mostrarAlerta(null, null, "Cliente cadastrado com sucesso!", Alert.AlertType.INFORMATION);
 
         Stage fechar = (Stage) salvar.getScene().getWindow();
         fechar.close();
     }
+
+    private byte[] imageToByteArray(Image imagem) throws IOException {
+        File tempFile = File.createTempFile("temp_image", ".png");
+        try (InputStream input = getClass().getResourceAsStream("/img/account.png")) {
+            if (input == null) {
+                throw new IOException("Resource not found: /img/account.png");
+            }
+            Files.copy(input, tempFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        }
+        return Files.readAllBytes(tempFile.toPath());
+    }
+
 }
