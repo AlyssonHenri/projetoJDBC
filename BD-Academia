@@ -27,7 +27,6 @@ CREATE TABLE conta (
 CREATE TABLE equipamento (
     ID INT PRIMARY KEY AUTO_INCREMENT,
     nome VARCHAR(200) NOT NULL,
-    imagem longblob,
     tipo VARCHAR(100) NOT NULL,
     status_equipamento BOOLEAN NOT NULL,
     conta_criador INT,
@@ -121,22 +120,61 @@ DELIMITER ;
 
 -- População inicial dos dados
 
--- Inserindo a conta admin
+-- conta admin
 INSERT INTO conta (nome, telefone, e_mail, cpf, endereco, login, senha, tipo_conta, data_registro)
 VALUES ('Administrador', '123456789', 'admin@gym.com', '11111111111', 'Rua Principal, 123', 'admin', 'admin', 'admin', CURDATE());
 
--- Exemplo de inserção de outros dados
+-- Clientes
 INSERT INTO conta (nome, telefone, e_mail, cpf, endereco, login, senha, tipo_conta, data_registro)
-VALUES ('João Silva', '987654321', 'joao@gym.com', '22222222222', 'Rua Secundária, 456', 'joao', 'senha123', 'cliente', CURDATE());
+VALUES ('João Silva', '987654321', 'joao@gym.com', '22222222222', 'Rua Secundária, 456', 'joao', '123', 'cliente', CURDATE());
 
+INSERT INTO conta (nome, telefone, e_mail, cpf, endereco, login, senha, tipo_conta, data_registro)
+VALUES ('Maria Souza', '123456780', 'maria@gym.com', '33333333333', 'Rua das Flores, 789', 'maria', 'senha123', 'cliente', CURDATE());
+
+INSERT INTO conta (nome, telefone, e_mail, cpf, endereco, login, senha, tipo_conta, data_registro)
+VALUES ('Carlos Pereira', '123456781', 'carlos@gym.com', '44444444444', 'Av. Central, 101', 'carlos', 'senha456', 'cliente', CURDATE());
+
+-- Funcionários
+INSERT INTO conta (nome, telefone, e_mail, cpf, endereco, login, senha, tipo_conta, data_registro, salario_funcionario, inicio_expediente_funcionario, fim_expediente_funcionario)
+VALUES ('Ana Funcionária', '555555555', 'ana@gym.com', '55555555555', 'Rua das Palmeiras, 202', 'ana', 'senha789', 'funcionario', CURDATE(), 2500.00, '08:00:00', '17:00:00');
+
+INSERT INTO conta (nome, telefone, e_mail, cpf, endereco, login, senha, tipo_conta, data_registro, salario_funcionario, inicio_expediente_funcionario, fim_expediente_funcionario)
+VALUES ('Pedro Func', '666666666', 'pedro@gym.com', '66666666666', 'Rua dos Pinheiros, 303', 'pedro', 'senha321', 'funcionario', CURDATE(), 3000.00, '09:00:00', '18:00:00');
+
+-- Equipamentos
 INSERT INTO equipamento (nome, tipo, status_equipamento, conta_criador, data_registro)
 VALUES ('Esteira', 'Cardio', TRUE, 1, CURDATE());
 
 INSERT INTO equipamento (nome, tipo, status_equipamento, conta_criador, data_registro)
 VALUES ('Bicicleta', 'Cardio', TRUE, 1, CURDATE());
 
-INSERT INTO treino (nome, duracao, descricao, conta_cliente)
-VALUES ('Treino A', '01:00:00', 'Treino de resistência', 2);
+INSERT INTO equipamento (nome, tipo, status_equipamento, conta_criador, data_registro)
+VALUES ('Leg Press', 'Musculação', TRUE, 1, CURDATE());
+
+INSERT INTO equipamento (nome, tipo, status_equipamento, conta_criador, data_registro)
+VALUES ('Supino Reto', 'Musculação', TRUE, 1, CURDATE());
+
+INSERT INTO equipamento (nome, tipo, status_equipamento, conta_criador, data_registro)
+VALUES ('Elíptico', 'Cardio', TRUE, 1, CURDATE());
+
+INSERT INTO equipamento (nome, tipo, status_equipamento, conta_criador, data_registro)
+VALUES ('Cadeira Extensora', 'Musculação', TRUE, 1, CURDATE());
+
+INSERT INTO equipamento (nome, tipo, status_equipamento, conta_criador, data_registro)
+VALUES ('Remada Baixa', 'Musculação', TRUE, 1, CURDATE());
+
+-- Reservas de equipamentos
+INSERT INTO reservas (data_reserva, hora_inicio, hora_fim, status, conta_cliente, equipamento)
+VALUES (CURDATE(), '11:00:00', '12:00:00', 0, 3, 2);
 
 INSERT INTO reservas (data_reserva, hora_inicio, hora_fim, status, conta_cliente, equipamento)
-VALUES (CURDATE(), '10:00:00', '11:00:00', 1, 2, 1);
+VALUES (CURDATE(), '15:00:00', '16:00:00', 1, 4, 3);
+
+INSERT INTO reservas (data_reserva, hora_inicio, hora_fim, status, conta_cliente, equipamento)
+VALUES (CURDATE(), '17:00:00', '18:00:00', 1, 2, 4);
+
+INSERT INTO reservas (data_reserva, hora_inicio, hora_fim, status, conta_cliente, equipamento)
+VALUES (CURDATE(), '09:00:00', '10:00:00', 0, 3, 5);
+
+INSERT INTO reservas (data_reserva, hora_inicio, hora_fim, status, conta_cliente, equipamento)
+VALUES (CURDATE(), '10:00:00', '11:00:00', 0, 2, 1);
