@@ -1,4 +1,4 @@
-# projetoJDBC
+# GRAFIT - Gerenciador de Reservas e Agendamentos Fitness
 aplicação do projeto final de LP-2
 
 
